@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comisiones Dashboard — CIPlastic 2026</title>
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  SALES ACQUISITION DASHBOARD — CIPLASTIC                     ║
+    ║  Fuente: Google Sheets (CSV público)                         ║
+    ║  Actualización: al cargar la página                          ║
+    ╠══════════════════════════════════════════════════════════════╣
+    ║  INSTRUCCIONES GITHUB PAGES:                                 ║
+    ║  1. Sube este archivo como index.html en tu repo             ║
+    ║  2. Settings > Pages > Source: main / root                   ║
+    ║  3. URL: https://tuusuario.github.io/nombre-repo             ║
+    ╠══════════════════════════════════════════════════════════════╣
+    ║  PUBLICAR EL SPREADSHEET:                                    ║
+    ║  Google Sheets → Archivo → Compartir →                       ║
+    ║  "Publicar en la web" → Pestaña correcta → CSV              ║
+    ║  Pega la URL en SHEET_CSV_URL abajo                          ║
+    ╚══════════════════════════════════════════════════════════════╝
+  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1a3a6b;
+      --navy2: #1e4a80;
+      --teal: #2bbfd4;
+      --teal-light: #e6f9fb;
+      --bg: #f0f4f9;
+      --surface: #ffffff;
+      --surface2: #e8eef7;
+      --border: #d0daea;
+      --text: #1a2640;
+      --muted: #6b7fa0;
+      --green: #00a854;
+      --green-bg: #e6f7ef;
+      --green-bd: #a3d9bc;
+      --yellow: #d4960a;
+      --yellow-bg: #fef8e6;
+      --red: #d9363e;
+      --red-bg: #fdf0f0;
+      --c1: #3266ad;
+      --c2: #1D9E75;
+      --c3: #7F77DD;
+      --c4: #D85A30;
+      --c5: #D4537E;
+      --c6: #888780;
+      --c7: #B4B2A9;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--navy);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 3px solid var(--teal);
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .logo-img { height: 36px; object-fit: contain; }
+    .logo-fallback { color: #fff; font-size: 18px; font-weight: 600; letter-spacing: 1px; }
+    .header-title { color: rgba(255,255,255,0.75); font-size: 13px; font-weight: 400; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 16px; margin-left: 4px; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .period-badge {
+      background: rgba(43,191,212,0.15);
+      border: 1px solid rgba(43,191,212,0.4);
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+    }
+    #last-update { color: rgba(255,255,255,0.45); font-size: 11px; font-family: 'DM Mono', monospace; }
+    #refresh-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.7);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+    #refresh-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); color: #fff; }
+
+    /* LOADING / ERROR */
+    #loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      gap: 16px;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--surface2);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--muted); font-size: 14px; }
+    #error-state {
+      display: none;
+      background: var(--red-bg);
+      border: 1px solid #f0a8aa;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 24px 32px;
+      color: var(--red);
+      font-size: 14px;
+    }
+    #error-state strong { display: block; margin-bottom: 6px; }
+
+    /* MAIN LAYOUT */
+    main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
+    #dashboard-content { display: none; }
+
+    /* METRIC CARDS */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .metric-card.c1::before { background: var(--c1); }
+    .metric-card.c2::before { background: var(--c2); }
+    .metric-card.c3::before { background: var(--c3); }
+    .metric-card.c4::before { background: var(--c4); }
+    .metric-card.c5::before { background: var(--c5); }
+    .metric-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .metric-value { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; margin-bottom: 4px; }
+    .metric-sub { font-size: 12px; color: var(--muted); }
+
+    /* CHART CARDS */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .charts-row-3 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 900px) {
+      .charts-row, .charts-row-3 { grid-template-columns: 1fr; }
+      main { padding: 16px; }
+      header { padding: 0 16px; }
+      .header-title { display: none; }
+    }
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+    .chart-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .chart-card-subtitle {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    .chart-wrap { position: relative; width: 100%; }
+
+    /* LEGEND */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-bottom: 12px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* RANKING */
+    .rank-list { display: flex; flex-direction: column; gap: 0; }
+    .rank-row {
+      display: grid;
+      grid-template-columns: 24px 1fr auto auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .rank-row:last-child { border-bottom: none; }
+    .rank-num { font-size: 12px; font-weight: 600; color: var(--muted); font-family: 'DM Mono', monospace; }
+    .rank-info { display: flex; flex-direction: column; gap: 4px; }
+    .rank-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .rank-bar-wrap { background: var(--surface2); border-radius: 4px; height: 6px; overflow: hidden; }
+    .rank-bar { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+    .rank-pct { font-size: 13px; font-weight: 600; color: var(--text); min-width: 38px; text-align: right; font-family: 'DM Mono', monospace; }
+    .rank-count { font-size: 11px; color: var(--muted); }
+
+    /* CHANNEL TABLE */
+    .channel-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .channel-table th {
+      text-align: left;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--border);
+    }
+    .channel-table th:not(:first-child) { text-align: right; }
+    .channel-table td {
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .channel-table td:not(:first-child) { text-align: right; font-family: 'DM Mono', monospace; font-size: 12px; }
+    .channel-table tr:last-child td { border-bottom: none; }
+    .channel-table .total-row td { font-weight: 600; color: var(--navy); border-top: 2px solid var(--border); padding-top: 12px; }
+    .ch-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 8px; vertical-align: middle; }
+    .pct-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .pct-pill.high { background: var(--green-bg); color: var(--green); }
+    .pct-pill.mid { background: var(--yellow-bg); color: var(--yellow); }
+    .pct-pill.low { background: var(--surface2); color: var(--muted); }
+
+    /* SECTION DIVIDER */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 28px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* FOOTER */
+    footer {
+      margin-top: 40px;
+      padding: 20px 32px;
+      background: var(--navy);
+      text-align: center;
+    }
+    .footer-text { color: rgba(255,255,255,0.4); font-size: 11px; }
+    .footer-teal { color: var(--teal); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <img class="logo-img"
+      src="https://ciplastic.com/wp-content/uploads/2025/04/cropped-Logo_Footer-1.png-1.webp"
+      alt="CIPlastic"
+      onerror="this.outerHTML='<span class=\'logo-fallback\'>CIPLASTIC</span>'">
+    <span class="header-title">Dashboard de Adquisición — Reporte de Comisiones</span>
+  </div>
+  <div class="header-right">
+    <span class="period-badge" id="period-label">Mayo 2026</span>
+    <span id="last-update">—</span>
+    <button id="refresh-btn" onclick="loadData()">↻ Actualizar</button>
+  </div>
+</header>
+
+<main>
+  <div id="loading-state">
+    <div class="spinner"></div>
+    <span class="loading-text">Cargando datos desde Google Sheets...</span>
+  </div>
+
+  <div id="error-state">
+    <strong>⚠️ Datos demo — no se pudo conectar a Google Sheets</strong>
+    <span id="error-msg"></span>
+    <div style="margin-top:10px;font-size:12px;line-height:1.7;">
+      <strong>Solución permanente — Apps Script proxy:</strong><br>
+      1. Abre tu Google Sheet → Extensiones → Apps Script<br>
+      2. Pega este código y haz clic en Implementar → Nueva implementación → Aplicación web → Acceso: Cualquier usuario:<br>
+      <code style="display:block;background:#fff3;padding:8px;border-radius:4px;margin:6px 0;font-size:11px;white-space:pre-wrap">function doGet() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var data = sheet.getDataRange().getValues();
+  var csv = data.map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  return ContentService.createTextOutput(csv)
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setHeaders({'Access-Control-Allow-Origin':'*'});
+}</code>
+      3. Copia la URL de implementación y reemplaza <code>SHEET_CSV_URL</code> en el archivo HTML.
+    </div>
+  </div>
+
+  <div id="dashboard-content">
+
+    <div class="section-label">resumen del período</div>
+    <div class="metrics-grid" id="metrics-container"></div>
+
+    <div class="section-label">canales de adquisición</div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-card-title">depósitos captados</div>
+        <div class="chart-card-subtitle">Total USD por canal</div>
+        <div class="legend" id="legend-bar"></div>
+        <div class="chart-wrap" style="height:260px">
+          <canvas id="chartBar" role="img" aria-label="Depósitos por canal de adquisición"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">distribución de pacientes</div>
+        <div class="chart-card-subtitle">% por canal</div>
+        <div class="legend" id="legend-pie"></div>
+        <div class="chart-wrap" style="height:260px">
+          <canvas id="chartPie" role="img" aria-label="Distribución porcentual de pacientes por canal"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-row-3">
+      <div class="chart-card">
+        <div class="chart-card-title">tabla de canales</div>
+        <div class="chart-card-subtitle">Pacientes, depósitos y venta por canal</div>
+        <table class="channel-table" id="channel-table"></table>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">depósitos semanales</div>
+        <div class="chart-card-subtitle">Volumen por semana del mes</div>
+        <div class="chart-wrap" style="height:220px">
+          <canvas id="chartWeek" role="img" aria-label="Depósitos semanales"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">procedimientos más vendidos</div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-card-title">ranking top 10</div>
+        <div class="chart-card-subtitle">Por volumen de pacientes</div>
+        <div class="rank-list" id="rank-list"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">top 10 — volumen %</div>
+        <div class="chart-card-subtitle">Participación sobre total de depósitos</div>
+        <div class="chart-wrap" style="height:360px">
+          <canvas id="chartProcs" role="img" aria-label="Top procedimientos por volumen"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <p class="footer-text">
+    <span class="footer-teal">CIPLASTIC</span> · Sales Acquisition Dashboard ·
+    Datos en vivo desde Google Sheets · Actualización manual
+  </p>
+</footer>
+
+<script>
+  // ════════════════════════════════════════════════════════════
+  //  CONFIGURACIÓN — CAMBIA ESTA URL CON TU CSV PUBLICADO
+  //  Google Sheets → Archivo → Compartir → Publicar en la web
+  //  → Pestaña de comisiones → Formato: CSV → Publicar
+  //  Pega la URL generada aquí abajo:
+  // ════════════════════════════════════════════════════════════
+  const SHEET_CSV_URL = 'https://script.google.com/macros/s/AKfycbzfIpw3LKPl2em29BciJe_QiTSvmUdBZWJdLoXpFOcZp3qzHwyfuWl83yiMaZ0Fyxg/exec';
+
+  // ════════════════════════════════════════════════════════════
+  //  ÍNDICES DE COLUMNAS (basado en tu estructura actual)
+  //  Fila de encabezado: #, Nombre, Agente, Lead Source, Fecha,
+  //  Depósito, Monto Cirugía, Comisionable, Ad ID, Cx de interés
+  // ════════════════════════════════════════════════════════════
+  const COL = {
+    nombre: 1,
+    agente: 2,
+    leadSource: 3,
+    fecha: 4,
+    deposito: 5,
+    montoCirugia: 6,
+    comisionable: 7,
+    adId: 8,
+    cx: 9
+  };
+
+  const PERIOD_LABEL = 'Mayo 25 — Jul 11, 2026';
+
+  // Paleta de colores por canal
+  const CH_COLORS = {
+    'Meta Ads Pagado':       '#3266ad',
+    'Orgánico Meta/WA':      '#1D9E75',
+    'Google Ads':            '#D85A30',
+    'Website':               '#7F77DD',
+    'TikTok':                '#D4537E',
+    'Referido/Px Ciplastic': '#888780',
+    'Otros':                 '#B4B2A9'
+  };
+
+  const PROC_COLORS = [
+    '#3266ad','#1D9E75','#7F77DD','#D85A30','#D4537E',
+    '#885FAB','#2BA8AB','#D4860A','#5B8CCC','#888780'
+  ];
+
+  let chartBar, chartPie, chartWeek, chartProcs;
+
+  // ════════════════════════════════════════════════════════════
+  //  CLASIFICAR CANAL
+  // ════════════════════════════════════════════════════════════
+  function classifyChannel(src, adId) {
+    const s = (src || '').toUpperCase().trim();
+    const a = (adId || '').toUpperCase().trim();
+    const hasPaidId = /^\d{10,}$/.test(a);
+    const hasNamedAd = a.includes('ADS') || a.includes('CAMPAÑA') || a.includes('RINO') ||
+                       a.includes('GLOW') || a.includes('SEPTOPLASTIA') || a.includes('INSTAGRAM ADS');
+    const isMeta = s.includes('META ADS') || s === 'META ADS FB' || s === 'META ADS IG' || s === 'META ADS';
+    if (isMeta) return 'Meta Ads Pagado';
+    if (s.includes('META ORG') || s.includes('META IG ORG') || s.includes('WHATSAPP ORG') ||
+        s === 'ORGANICO' || s === 'ORGÁNICO' || s.includes('WHATSAPP ORG') || s.includes('WA')) return 'Orgánico Meta/WA';
+    if (s.includes('GOOGLE')) return 'Google Ads';
+    if (s.includes('WEBSITE') || s === 'WEB') return 'Website';
+    if (s.includes('TIKTOK')) return 'TikTok';
+    if (s.includes('PX CIPLASTIC') || s.includes('PX. CIPLASTIC') || s.includes('REF.') ||
+        s.includes('DR HERMES') || s.includes('RECOMENDACIÓN') || s.includes('ESPECTACULAR') ||
+        s.includes('DR.')) return 'Referido/Px Ciplastic';
+    if (hasPaidId || hasNamedAd) return 'Meta Ads Pagado';
+    return 'Otros';
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  PARSEAR CSV
+  // ════════════════════════════════════════════════════════════
+  function parseCSV(text) {
+    const lines = text.split('\n').filter(l => l.trim());
+    const rows = lines.map(line => {
+      const cols = [];
+      let cur = '', inQ = false;
+      for (let c of line) {
+        if (c === '"') { inQ = !inQ; }
+        else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else cur += c;
+      }
+      cols.push(cur.trim());
+      return cols;
+    });
+    return rows;
+  }
+
+  function parseMoney(val) {
+    if (!val) return 0;
+    return parseFloat(val.replace(/[$,\s]/g, '')) || 0;
+  }
+
+  function getWeekNum(fechaStr) {
+    if (!fechaStr) return 1;
+    const parts = fechaStr.toLowerCase().replace(/\s+/g, ' ').trim().split(' ');
+    let day = 1;
+    for (const p of parts) {
+      const n = parseInt(p);
+      if (!isNaN(n) && n >= 1 && n <= 31) { day = n; break; }
+    }
+    if (day <= 7) return 1;
+    if (day <= 14) return 2;
+    if (day <= 21) return 3;
+    if (day <= 28) return 4;
+    return 5;
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  PROCESAR DATOS
+  // ════════════════════════════════════════════════════════════
+  function processData(rows) {
+    const channels = {};
+    const cxMap = {};
+    const weekDep = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let totalDep = 0, totalSurgery = 0, totalPatients = 0, comisionables = 0;
+
+    // Skip header rows (filas sin número al inicio)
+    const dataRows = rows.filter(r => {
+      const first = (r[0] || '').trim();
+      return /^\d+$/.test(first) && parseInt(first) >= 1;
+    });
+
+    dataRows.forEach(r => {
+      const dep = parseMoney(r[COL.deposito]);
+      const surgery = parseMoney(r[COL.montoCirugia]);
+      const src = r[COL.leadSource] || '';
+      const adId = r[COL.adId] || '';
+      const fecha = r[COL.fecha] || '';
+      const cx = normalizeCx(r[COL.cx] || 'Sin especificar');
+      const isComisionable = (r[COL.comisionable] || '').includes('✔') || (r[COL.comisionable] || '').toLowerCase().includes('s');
+
+      if (dep === 0 && surgery === 0) return; // skip empty rows
+
+      const ch = classifyChannel(src, adId);
+      if (!channels[ch]) channels[ch] = { deposits: 0, surgery: 0, count: 0 };
+      channels[ch].deposits += dep;
+      channels[ch].surgery += surgery;
+      channels[ch].count++;
+
+      cxMap[cx] = (cxMap[cx] || 0) + 1;
+
+      const wk = getWeekNum(fecha);
+      weekDep[wk] = (weekDep[wk] || 0) + dep;
+
+      totalDep += dep;
+      totalSurgery += surgery;
+      totalPatients++;
+      if (isComisionable) comisionables++;
+    });
+
+    return { channels, cxMap, weekDep, totalDep, totalSurgery, totalPatients, comisionables };
+  }
+
+  function normalizeCx(raw) {
+    const r = raw.toLowerCase();
+    if (r.includes('rinoplastia primaria') || r.includes('rinoplastia')) return 'Rinoplastia';
+    if (r.includes('rinoseptoplastia') || r.includes('septoplastia')) return 'Rinoseptoplastia';
+    if (r.includes('ritidoplastia') || r.includes('facelift') || r.includes('ritidectomia')) return 'Ritidoplastia / Facelift';
+    if (r.includes('lipoabdominoplastia')) return 'Lipoabdominoplastia';
+    if (r.includes('lipoescultura') || r.includes('liposcultura')) return 'Lipoescultura';
+    if (r.includes('mastopexia')) return 'Mastopexia';
+    if (r.includes('mamoplastia') || r.includes('mamoplasia')) return 'Mamoplastia / Aumento';
+    if (r.includes('abdominoplastia')) return 'Abdominoplastia';
+    if (r.includes('blefaroplastia')) return 'Blefaroplastia';
+    if (r.includes('liposucción') || r.includes('liposuccion')) return 'Liposucción';
+    if (r.includes('rejuvenecimiento')) return 'Rejuvenecimiento Facial';
+    if (r.includes('endolift')) return 'Endolift';
+    if (r.includes('transplante capilar') || r.includes('tansplante')) return 'Transplante Capilar';
+    if (r.includes('lip lift') || r.includes('lifting de labios')) return 'Lip Lift';
+    return raw.length > 40 ? raw.substring(0, 38) + '…' : raw;
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  RENDER
+  // ════════════════════════════════════════════════════════════
+  function renderMetrics(d) {
+    const { totalDep, totalSurgery, totalPatients, channels } = d;
+    const metaDep = (channels['Meta Ads Pagado'] || {}).deposits || 0;
+    const ticket = totalPatients > 0 ? Math.round(totalSurgery / totalPatients) : 0;
+    const metaPct = totalPatients > 0 ? Math.round(((channels['Meta Ads Pagado'] || {}).count || 0) / totalPatients * 100) : 0;
+    const orgCount = ((channels['Orgánico Meta/WA'] || {}).count || 0);
+    const orgPct = totalPatients > 0 ? Math.round(orgCount / totalPatients * 100) : 0;
+
+    const metrics = [
+      { label: 'Total depósitos', value: '$' + totalDep.toLocaleString('en-US'), sub: totalPatients + ' pacientes', cls: 'c1' },
+      { label: 'Venta total cirugías', value: '$' + totalSurgery.toLocaleString('en-US'), sub: 'USD estimado', cls: 'c2' },
+      { label: 'Meta Ads pagado', value: '$' + metaDep.toLocaleString('en-US'), sub: metaPct + '% del total px', cls: 'c3' },
+      { label: 'Ticket promedio', value: '$' + ticket.toLocaleString('en-US'), sub: 'por cirugía', cls: 'c4' },
+      { label: 'Orgánico Meta/WA', value: orgCount + ' px', sub: orgPct + '% del período', cls: 'c5' },
+    ];
+
+    document.getElementById('metrics-container').innerHTML = metrics.map(m =>
+      `<div class="metric-card ${m.cls}">
+        <div class="metric-label">${m.label}</div>
+        <div class="metric-value">${m.value}</div>
+        <div class="metric-sub">${m.sub}</div>
+      </div>`
+    ).join('');
+  }
+
+  function renderCharts(d) {
+    const { channels, cxMap, weekDep, totalPatients } = d;
+    const chKeys = Object.keys(channels).sort((a, b) => channels[b].deposits - channels[a].deposits);
+
+    // LEGEND BAR
+    document.getElementById('legend-bar').innerHTML = chKeys.map(k =>
+      `<div class="legend-item"><span class="legend-dot" style="background:${CH_COLORS[k] || '#888'}"></span>${k}</div>`
+    ).join('');
+
+    // LEGEND PIE
+    document.getElementById('legend-pie').innerHTML = chKeys.map(k => {
+      const pct = Math.round(channels[k].count / totalPatients * 100);
+      return `<div class="legend-item"><span class="legend-dot" style="background:${CH_COLORS[k] || '#888'}"></span>${k} ${pct}%</div>`;
+    }).join('');
+
+    // BAR CHART
+    if (chartBar) chartBar.destroy();
+    chartBar = new Chart(document.getElementById('chartBar'), {
+      type: 'bar',
+      data: {
+        labels: chKeys,
+        datasets: [{
+          data: chKeys.map(k => channels[k].deposits),
+          backgroundColor: chKeys.map(k => CH_COLORS[k] || '#888'),
+          borderRadius: 5,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => ' $' + c.raw.toLocaleString('en-US') } }
+        },
+        scales: {
+          x: { ticks: { font: { size: 11, family: 'DM Sans' }, maxRotation: 35, autoSkip: false }, grid: { display: false } },
+          y: { ticks: { callback: v => '$' + (v >= 1000 ? Math.round(v/1000) + 'k' : v), font: { size: 11 } }, grid: { color: '#e8eef7' } }
+        }
+      }
+    });
+
+    // PIE CHART
+    if (chartPie) chartPie.destroy();
+    chartPie = new Chart(document.getElementById('chartPie'), {
+      type: 'doughnut',
+      data: {
+        labels: chKeys,
+        datasets: [{
+          data: chKeys.map(k => channels[k].count),
+          backgroundColor: chKeys.map(k => CH_COLORS[k] || '#888'),
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => ' ' + c.label + ': ' + c.raw + ' px (' + Math.round(c.raw / totalPatients * 100) + '%)' } }
+        },
+        cutout: '60%'
+      }
+    });
+
+    // WEEK CHART
+    const wkLabels = ['Sem 1 (1–7)', 'Sem 2 (8–14)', 'Sem 3 (15–21)', 'Sem 4 (22–28)', 'Sem 5 (29+)'];
+    const wkData = [1,2,3,4,5].map(w => weekDep[w] || 0);
+    if (chartWeek) chartWeek.destroy();
+    chartWeek = new Chart(document.getElementById('chartWeek'), {
+      type: 'line',
+      data: {
+        labels: wkLabels,
+        datasets: [{
+          data: wkData,
+          borderColor: '#3266ad',
+          backgroundColor: 'rgba(50,102,173,0.07)',
+          tension: 0.35,
+          fill: true,
+          pointRadius: 5,
+          pointBackgroundColor: '#3266ad',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' $' + c.raw.toLocaleString('en-US') } } },
+        scales: {
+          x: { ticks: { font: { size: 11 } }, grid: { display: false } },
+          y: { ticks: { callback: v => '$' + (v >= 1000 ? Math.round(v/1000) + 'k' : v), font: { size: 11 } }, grid: { color: '#e8eef7' } }
+        }
+      }
+    });
+
+    // CHANNEL TABLE
+    const totalDep = Object.values(channels).reduce((a, c) => a + c.deposits, 0);
+    const totalSurg = Object.values(channels).reduce((a, c) => a + c.surgery, 0);
+    const totalCount = Object.values(channels).reduce((a, c) => a + c.count, 0);
+    let tableHtml = `<thead><tr>
+      <th>Canal</th><th>Px</th><th>% Px</th><th>Depósitos</th><th>Venta</th>
+    </tr></thead><tbody>`;
+    chKeys.forEach(k => {
+      const ch = channels[k];
+      const pct = Math.round(ch.count / totalCount * 100);
+      const cls = pct >= 40 ? 'high' : pct >= 15 ? 'mid' : 'low';
+      tableHtml += `<tr>
+        <td><span class="ch-dot" style="background:${CH_COLORS[k] || '#888'}"></span>${k}</td>
+        <td>${ch.count}</td>
+        <td><span class="pct-pill ${cls}">${pct}%</span></td>
+        <td>$${ch.deposits.toLocaleString('en-US')}</td>
+        <td>$${ch.surgery.toLocaleString('en-US')}</td>
+      </tr>`;
+    });
+    tableHtml += `</tbody><tfoot><tr class="total-row">
+      <td>Total</td><td>${totalCount}</td><td>100%</td>
+      <td>$${totalDep.toLocaleString('en-US')}</td>
+      <td>$${totalSurg.toLocaleString('en-US')}</td>
+    </tr></tfoot>`;
+    document.getElementById('channel-table').innerHTML = tableHtml;
+
+    // PROCEDURES RANKING
+    const cxSorted = Object.entries(cxMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const cxTotal = Object.values(cxMap).reduce((a, b) => a + b, 0);
+    document.getElementById('rank-list').innerHTML = cxSorted.map(([name, count], i) => {
+      const pct = Math.round(count / cxTotal * 100);
+      const barW = Math.round(count / cxSorted[0][1] * 100);
+      return `<div class="rank-row">
+        <span class="rank-num">#${i+1}</span>
+        <div class="rank-info">
+          <span class="rank-name">${name}</span>
+          <div class="rank-bar-wrap"><div class="rank-bar" style="width:${barW}%;background:${PROC_COLORS[i] || '#888'}"></div></div>
+          <span class="rank-count">${count} pacientes</span>
+        </div>
+        <span class="rank-pct" style="color:${PROC_COLORS[i] || '#888'}">${pct}%</span>
+      </div>`;
+    }).join('');
+
+    // PROCS HORIZONTAL BAR
+    if (chartProcs) chartProcs.destroy();
+    const procH = cxSorted.length * 40 + 60;
+    document.getElementById('chartProcs').parentElement.style.height = procH + 'px';
+    chartProcs = new Chart(document.getElementById('chartProcs'), {
+      type: 'bar',
+      data: {
+        labels: cxSorted.map(([n]) => n),
+        datasets: [{
+          data: cxSorted.map(([, c]) => c),
+          backgroundColor: PROC_COLORS.slice(0, cxSorted.length),
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => ' ' + c.raw + ' pacientes (' + Math.round(c.raw / cxTotal * 100) + '%)' } }
+        },
+        scales: {
+          x: { ticks: { font: { size: 11 } }, grid: { color: '#e8eef7' } },
+          y: { ticks: { font: { size: 11 } }, grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  CARGA PRINCIPAL
+  // ════════════════════════════════════════════════════════════
+  async function loadData() {
+    document.getElementById('loading-state').style.display = 'flex';
+    document.getElementById('dashboard-content').style.display = 'none';
+    document.getElementById('error-state').style.display = 'none';
+
+    // Si no hay URL configurada, usa datos de demostración
+    if (!SHEET_CSV_URL || SHEET_CSV_URL === 'TU_URL_CSV_AQUI') {
+      loadDemoData();
+      return;
+    }
+
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      const res = await fetch(SHEET_CSV_URL, { signal: controller.signal });
+      clearTimeout(timeout);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      if (!text || text.length < 50) throw new Error('Respuesta vacía');
+      const rows = parseCSV(text);
+      if (rows.length < 2) throw new Error('Sin datos');
+      renderDashboard(rows);
+    } catch (err) {
+      console.error('Error cargando datos:', err.message);
+      showError('No se pudo conectar al Apps Script. Mostrando datos demo.');
+      loadDemoData();
+    }
+  }
+
+  function renderDashboard(rows) {
+    const d = processData(rows);
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('dashboard-content').style.display = 'block';
+    document.getElementById('period-label').textContent = PERIOD_LABEL;
+    document.getElementById('last-update').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-MX');
+    renderMetrics(d);
+    renderCharts(d);
+  }
+
+  function showError(msg) {
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('error-state').style.display = 'block';
+    document.getElementById('error-msg').textContent = msg;
+    // Mostrar el dashboard con datos demo de todas formas
+    document.getElementById('dashboard-content').style.display = 'block';
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  DATOS DE DEMO (se usan cuando no hay URL configurada)
+  //  Estos son los datos reales de mayo 2026
+  // ════════════════════════════════════════════════════════════
+  function loadDemoData() {
+    const demoRows = [
+      ["1","Lupe Angelina Gonzales","Misael Miranda","META ADS FB","1 mayo","$250.00","$4,590.00","✔ Sí","Campaña Easter Moment Rino","Rinoplastia Primaria"],
+      ["2","Maria Guadalupe Robles","Misael Miranda","META IG ORG","1 mayo","$500.00","$3,790.00","✔ Sí","","Rinoplastia Primaria"],
+      ["3","Rosa I Alcantar","Misael Miranda","META ADS FB","1 mayo","$300.00","$7,190.00","✔ Sí","120243032147940034","Ritidoplastia completa"],
+      ["4","Marlene Magana Kim","Misael Miranda","META ADS IG","1 mayo","$250.00","$6,500.00","✔ Sí","120241816426650034","Lipoabdominoplastia"],
+      ["5","Irene Ramirez","Pedro Baca","META ADS FB","2 mayo","$300.00","$6,590.00","✔ Sí","120242286998210034","Rejuvenecimiento Facial"],
+      ["6","Stacey Aguilera","Misael Miranda","META ADS IG","2 mayo","$250.00","$5,690.00","✔ Sí","120242286952330034","Ritidoplastia"],
+      ["7","Lucia Garcia","Alexa Escalante","META ADS FB","2 mayo","$250.00","$5,600.00","✔ Sí","120243037425840034","Lipoabdominoplastia"],
+      ["8","Ilham Elmi Davis","Alexa Escalante","META ADS FB","4 mayo","$250.00","$6,500.00","✔ Sí","120241816426690034","Lipoabdominoplastia"],
+      ["9","Suli Baker","Misael Miranda","META ADS IG","4 mayo","$250.00","$6,690.00","✔ Sí","120243036245730034","Mamoplastia de aumento"],
+      ["10","Jesus Loza Cruz","Alexa Escalante","META ADS IG","4 mayo","$250.00","$10,000.00","✘ No","120241418111840034","Facelift"],
+      ["11","Maria del Carmen Carmona","Px Ciplastic","Px CIPLASTIC","5 mayo","$250.00","$6,200.00","✘ No","","Lipoescultura corporal"],
+      ["12","Jesus Daniel Moreno","Pedro Baca","META ORG WA","5 mayo","$250.00","$7,990.00","✔ Sí","","Lipoescultura"],
+      ["13","Alejandra Padilla","Alexa Escalante","META ADS IG","5 mayo","$250.00","$3,790.00","✔ Sí","120243583614920034","Rinoplastia primaria"],
+      ["14","Maria Maravilla","Misael Miranda","META ADS IG","5 mayo","$250.00","$7,500.00","✔ Sí","","Lipoabdominoplastia"],
+      ["15","Ash Jaber","Alexa Escalante","META ORG WA","5 mayo","$250.00","$5,500.00","✔ Sí","","Transplante capilar"],
+      ["16","Julisa Aguilar","Misael Miranda","META ORG WA","5 mayo","$250.00","$2,390.00","✘ No","","Liposucción"],
+      ["17","Fatema Basher","Alexa Escalante","META ORG WA","5 mayo","$250.00","$5,290.00","✔ Sí","","Mastopexia"],
+      ["18","Cora Schwan","Alexa Escalante","META ORG WA","6 mayo","$250.00","$3,790.00","✔ Sí","","Rinoplastia"],
+      ["19","Angalena Goro","Misael Miranda","Website","6 mayo","$300.00","$3,790.00","✘ No","","Rinoplastia"],
+      ["20","Brook Woudenberg","Alexa Escalante","META ORG WA","7 mayo","$250.00","$3,790.00","✔ Sí","","Rinoplastia"],
+      ["21","Daniela Martinez","Px Ciplastic","Px Ciplastic","7 mayo","$250.00","$3,600.00","✘ No","","Mamoplastia de aumento"],
+      ["22","Lilith Avalos","Alexa Escalante","META ADS FB","7 mayo","$250.00","$4,600.00","✔ Sí","","Lipoescultura"],
+      ["23","Mara Rosas","Alexa Escalante","META ORG WA","7 mayo","$250.00","$4,160.00","✔ Sí","FB Ads | Rinoseptoplastia","Rinoseptoplastia"],
+      ["24","Erick Taboada","Karina Sifuentes","META ORG WA","7 mayo","$250.00","$4,440.00","✔ Sí","","Rinoplastia"],
+      ["25","Siham Jamai","Pedro Baca","META ORG WA","7 mayo","$500.00","$3,490.00","✔ Sí","","Endolift"],
+      ["26","Fabiana Parra","Alexa Escalante","META ORG WA","7 mayo","$250.00","$3,490.00","✔ Sí","Instagram Ads-Rinoplastia","Rinoplastia primaria"],
+      ["27","Dorene Ramirez","Alexa Escalante","META ADS IG","8 mayo","$500.00","$13,000.00","✔ Sí","","Lipoabdominoplastia"],
+      ["28","Darely Gutierrez","Pedro Baca","META ORG WA","8 mayo","$250.00","$3,500.00","✔ Sí","","Rinoplastia"],
+      ["29","Estrellita Exmeralda","Pedro Baca","META ADS IG","8 mayo","$250.00","$4,490.00","✔ Sí","120243041908690034","Rinoplastia Primaria"],
+      ["30","Melissa Reynoso","Misael Miranda","META ORG WA","9 mayo","$250.00","$10,000.00","✔ Sí","","Lipoescultura"],
+      ["31","Palmieri Salazar","Pedro Baca","Px Ciplastic","9 mayo","$300.00","$14,830.00","✘ No","","Lipoabdominoplastia"],
+      ["32","Basma Arshak","Misael Miranda","META ADS IG","9 mayo","$250.00","$10,990.00","✔ Sí","","Lipoabdominoplastia"],
+      ["33","Citlally Calderon","Alexa Escalante","META ADS IG","9 mayo","$250.00","$3,790.00","✔ Sí","120245948781620034","Rinoplastia"],
+      ["34","Evelyn Rojas","Pedro Baca","META ADS FB","10 mayo","$250.00","$7,200.00","✔ Sí","","Mastopexia"],
+      ["35","Cynthia Lopez","Px Ciplastic","Px. CIPLASTIC","11 mayo","$250.00","$11,580.00","✘ No","","Mastopexia"],
+      ["36","Jasmine Mitchell","Px Ciplastic","META ORG WA","11 mayo","$250.00","$6,690.00","✘ No","","Lipoabdominoplastia"],
+      ["37","Aaron Calvillo","Misael Miranda","META ADS IG","11 mayo","$250.00","$4,290.00","✔ Sí","","Rinoplastia primaria"],
+      ["38","Rebeca Cruz-Marquez","Pedro Baca","Google ADDS","11 mayo","$250.00","$7,280.00","✔ Sí","","Lipoabdominoplastia"],
+      ["39","Kimberly Canseco","Pedro Baca","META ORG WA","12 mayo","$300.00","$7,090.00","✔ Sí","","Mamoplastia de aumento"],
+      ["40","Olga Suarez","Alexa Escalante","META IG ORG","12 mayo","$250.00","$4,590.00","✔ Sí","","Mastopexia"],
+      ["41","Hana Alnaimi","Alexa Escalante","META ORG WA","12 mayo","$250.00","$3,790.00","✔ Sí","","Rinoplastia primaria"],
+      ["42","Vivian Arencibia","Alexa Escalante","META ADS IG","12 mayo","$250.00","$4,190.00","✔ Sí","120243583614920034","Rinoplastia Primaria"],
+      ["43","Ana Bonaguro","Misael Miranda","META ADS FB","12 mayo","$250.00","$6,400.00","✔ Sí","120242287911820034","Lipoescultura"],
+      ["44","Medari Mejia","Px Ciplastic","Ref. Dr Hermes","13 mayo","$5,590.00","$5,590.00","✘ No","","Mastopexia"],
+      ["45","Jury Janet Diaz","Misael Miranda","META ORG WA","13 mayo","$500.00","$4,590.00","✔ Sí","","Mastopexia"],
+      ["46","Eva Cruz","Misael Miranda","META ORG WA","13 mayo","$250.00","$10,980.00","✔ Sí","","Ritidoplastia"],
+      ["47","Evan Kruchowy","Misael Miranda","META ADS IG","13 mayo","$250.00","$4,790.00","✔ Sí","120243583614920034","Rinoplastia"],
+      ["48","Abel Nevarez","Alexa Escalante","META ADS FB","14 mayo","$5,020.00","$7,600.00","✔ Sí","120241418111840034","Lipoescultura"],
+      ["49","Edith Macias","Px Ciplastic","Ref. Dr Hermes","14 mayo","$270.00","$0","✘ No","","Lipoabdominoplastia"],
+      ["50","Lizbeth Magdaleno","Alexa Escalante","WEBSITE","14 mayo","$250.00","$4,590.00","✔ Sí","","Lipoabdominoplastia"],
+      ["51","Hanan Kareem","Alexa Escalante","META IG ORG","14 mayo","$250.00","$6,990.00","✔ Sí","","Lipoabdominoplastia"],
+      ["52","Rodolfo Rodriguez","Pedro Baca","Espectacular Plaza Peninsula","14 mayo","$250.00","$13,770.00","✔ Sí","","Ritidoplastia"],
+      ["53","Judy Dewolf","Px Ciplastic","Px Ciplastic","15 mayo","$250.00","$4,590.00","✘ No","","Mastopexia"],
+      ["54","Miriam Alvarado","Misael Miranda","META IG ORG","15 mayo","$250.00","$4,590.00","✔ Sí","","Mastopexia"],
+      ["55","Geraldine Urbano","Alexa Escalante","META IG ORG","15 mayo","$500.00","$4,600.00","✔ Sí","","Lipoescultura"],
+      ["56","Natalie Trejo","Alexa Escalante","META ORG WA","15 mayo","$250.00","$4,190.00","✔ Sí","","Rinoseptoplastia"],
+      ["57","Nancy Trejo","Alexa Escalante","META ORG WA","15 mayo","$250.00","$4,190.00","✔ Sí","","Rinoseptoplastia"],
+      ["58","Eric Ulloa","Alexa Escalante","META ORG WA","15 mayo","$250.00","$3,790.00","✔ Sí","","Rinoplastia primaria"],
+      ["59","Mayra Solis","Misael Miranda","META ORG WA","16 mayo","$250.00","$4,490.00","✔ Sí","META ADS FB | Glow Forward","Rinoplastia"],
+      ["60","Lizeth Arellano","Alexa Escalante","META ADS IG","16 mayo","$250.00","$3,390.00","✔ Sí","120242286998210034","Rinoplastia"],
+      ["61","Carol Serna","Pedro Baca","META ADS FB","16 mayo","$500.00","$7,570.00","✔ Sí","122198754788388150","Rinoplastia"],
+      ["62","Alberto Lopez","Pedro Baca","META ADS FB","16 mayo","$250.00","$3,830.00","✔ Sí","122199310430388150","Rinoseptoplastia"],
+      ["63","Ruben Regalado","Alexa Escalante","META ADS IG","17 mayo","$250.00","$4,290.00","✔ Sí","120243041908690034","Rinoseptoplastia"],
+      ["64","Yvette Muñoz","Pedro Baca","META IG ORG","17 mayo","$250.00","$4,590.00","✔ Sí","","Mastopexia"],
+      ["65","Jessica Rosales","Misael Miranda","META ORG WA","17 mayo","$500.00","$3,830.00","✔ Sí","","Rinoplastia"],
+      ["66","Krystal Sevilla","Pedro Baca","WEBSITE","17 mayo","$250.00","$5,500.00","✔ Sí","","Lipoescultura"],
+      ["67","Gerardo Morales","Alexa Escalante","META ADS FB","17 mayo","$250.00","$6,090.00","✔ Sí","120242286952330034","Rinoplastia"],
+      ["68","Laura Esquerra","Misael Miranda","TikTok","17 mayo","$250.00","$7,590.00","✔ Sí","","Ritidoplastia"],
+      ["69","Anabel Duarte","Alexa Escalante","META ORG WA","18 mayo","$250.00","$4,661.00","✔ Sí","","Mamoplastia de aumento"],
+      ["70","Olivia Valdovinos","Pedro Baca","META ADS IG","18 mayo","$250.00","$4,190.00","✔ Sí","120243041908690034","Rinoseptoplastia"],
+      ["71","Anna Inthavong","Alexa Escalante","META ADS IG","18 mayo","$250.00","$3,760.00","✔ Sí","120246597906580034","Rinoplastia"],
+      ["72","Guadalupe Acosta","Misael Miranda","META ADS FB","18 mayo","$250.00","$9,000.00","✔ Sí","120241816426610034","Ritidoplastia"],
+      ["73","Perla Joya","Alexa Escalante","META IG ORG","19 mayo","$250.00","$3,510.00","✔ Sí","","Mamoplastia de aumento"],
+      ["74","Manuel Alvarez","Misael Miranda","META ADS IG","19 mayo","$250.00","$3,790.00","✔ Sí","120241810116240034","Rinoplastia"],
+      ["75","Inez Nazario","Misael Miranda","META ADS FB","20 mayo","$500.00","$7,990.00","✔ Sí","120243034643550034","Ritidoplastia"],
+      ["76","Ivone Gabina","Alexa Escalante","META ADS FB","20 mayo","$250.00","$3,490.00","✔ Sí","120243041908690034","Rinoplastia"],
+      ["77","Monica Robles","Misael Miranda","META ADS FB","21 mayo","$300.00","$14,050.00","✔ Sí","120241418111840034","Ritidoplastia"],
+      ["78","Uriel Flores","Pedro Baca","META ADS","21 mayo","$250.00","$3,790.00","✔ Sí","120243041908690034","Rinoplastia"],
+      ["79","Stephanie Ronquillo","Alexa Escalante","META ADS IG","21 mayo","$250.00","$5,090.00","✔ Sí","120243583614920034","Rinoplastia primaria"],
+      ["80","Jasmin Mendez","Alexa Escalante","META ORG WA","21 mayo","$1,000.00","$3,760.00","✔ Sí","","Mamoplastia de aumento"],
+      ["81","Jennifer Corona","Alexa Escalante","META ADS IG","22 mayo","$250.00","$6,430.00","✔ Sí","","Rinoplastia"],
+      ["82","Ana Alvarez","Pedro Baca","WEBSITE","22 mayo","$250.00","$9,000.00","✔ Sí","","Ritidoplastia"],
+      ["83","Janeth Enriquez","Alexa Escalante","META ORG WA","22 mayo","$250.00","$3,290.00","✔ Sí","","Mamoplastia de aumento"],
+      ["84","Edith Leanos","Misael Miranda","Meta Ads","22 mayo","$250.00","$3,190.00","✔ Sí","120243041908690034","Blefaroplastia"],
+      ["85","Melissa Garcia","Pedro Baca","META IG ORG","22 mayo","$250.00","$3,830.00","✔ Sí","","Rinoplastia"],
+      ["86","Hilda Valadez","Pedro Baca","Meta Ads","22 mayo","$250.00","$3,490.00","✔ Sí","120243041908690034","Rinoplastia primaria"],
+      ["87","Jennifer Gamboa","Pedro Baca","META ORG WA","24 mayo","$250.00","$3,950.00","✔ Sí","","Rinoplastia"],
+      ["88","Sergio Cadena","Px Ciplastic","DR HERMES","25 mayo","$1,105.00","$0","✘ No","","Levantamiento Pubico"],
+      ["89","Damaris Hernandez","Alexa Escalante","META ADS FB","26 mayo","$250.00","$12,200.00","✔ Sí","120242286998210034","Mamoplastia Reducción"],
+      ["90","Gladys Arzate","Alexa Escalante","Organico","26 mayo","$250.00","$6,500.00","✔ Sí","","Abdominoplastia"],
+      ["91","Maria Maya","Pedro Baca","META ADS IG","26 mayo","$250.00","$5,490.00","✔ Sí","120242286998210034","Lipoescultura"],
+      ["92","Yamilet Torres","Pedro Baca","META ADS IG","26 mayo","$250.00","$4,290.00","✔ Sí","Social Media | Rinoseptoplastia","Rinoseptoplastia"],
+      ["93","Reine Khlaid","Pedro Baca","Website","26 mayo","$250.00","$3,490.00","✔ Sí","","Rinoplastia primaria"],
+      ["94","Sandra Batres","Alexa Escalante","META ADS IG","26 mayo","$250.00","$4,510.00","✔ Sí","120243583614920034","Rinoseptoplastia"],
+      ["95","Emily Racioppi","Alexa Escalante","Recomendación","26 mayo","$250.00","$4,590.00","✔ Sí","","Mastopexia"],
+      ["96","Gabriela Villalba","Pedro Baca","META ADS IG","26 mayo","$250.00","$0","✔ Sí","120246597906580034","Rinoplastia Primaria"],
+      ["97","Maricela Flores","Pedro Baca","META ADS FB","27 mayo","$250.00","$7,990.00","✔ Sí","120242286998210034","Ritidoplastia"],
+      ["98","Gissel Llampallas","Alexa Escalante","META ADS FB","27 mayo","$250.00","$8,590.00","✔ Sí","120243041908690034","Ritidoplastia"],
+      ["99","Cristina Chavez","Misael Miranda","Whatsapp Org","27 mayo","$250.00","$6,690.00","✔ Sí","","Mastopexia"],
+      ["100","Cassandra Camarena","Alexa Escalante","META ADS IG","27 mayo","$250.00","$4,510.00","✔ Sí","120246852888710034","Rinoseptoplastia"],
+      ["101","Liliana Mancia","Misael Miranda","META ADS IG","27 mayo","$250.00","$4,290.00","✔ Sí","120243583614920034","Rinoseptoplastia"],
+      ["102","Nora Guzman","Pedro Baca","Whatsapp Org","27 mayo","$250.00","$6,390.00","✔ Sí","","Ritidoplastia"],
+      ["103","Azulle Covarubias","Pedro Baca","Organico","27 mayo","$250.00","$3,690.00","✔ Sí","","Rinoplastia"],
+      ["104","Jacqueline Anaya","Misael Miranda","META ADS IG","27 mayo","$250.00","$3,830.00","✔ Sí","","Rinoplastia"],
+      ["105","Karen Galvan","Misael Miranda","Whatsapp Org","27 mayo","$250.00","$6,290.00","✔ Sí","","Abdominoplastia"],
+      ["106","Tishani James-Tyler","Misael Miranda","Whatsapp Org","27 mayo","$250.00","$4,590.00","✔ Sí","","Mastopexia"],
+      ["107","Natalia Castellanos","Misael Miranda","META ADS IG","28 mayo","$250.00","$7,370.00","✔ Sí","","Lipoescultura"],
+      ["108","Alexandra Lara","Misael Miranda","Px Ciplastic","28 mayo","$380.00","$6,500.00","✘ No","","Ritidoplastia"],
+      ["109","Alexandra Izquierdo","Misael Miranda","META ADS FB","28 mayo","$250.00","$9,780.00","✔ Sí","120241816426670034","Ritidoplastia"],
+      ["110","Martha Ramirez","Pedro Baca","","28 mayo","$500.00","$9,890.00","✔ Sí","","Ritidoplastia"],
+      ["111","Reyna Mercado","Pedro Baca","","28 mayo","$250.00","$3,290.00","✔ Sí","","Blefaroplastia"],
+      ["112","Kristen Ramirez","Alexa Escalante","Whatsapp Org","28 mayo","$250.00","$3,632.00","✔ Sí","","Rinoplastia"],
+      ["113","Cynthia Bailon","Px Ciplastic","Px Ciplastic","28 mayo","$250.00","$3,390.00","✔ Sí","","Mamoplastia de aumento"],
+      ["114","Amanda Welch","Pedro Baca","Google Adds","29 mayo","$250.00","$3,600.00","✔ Sí","","Liposucción"],
+      ["115","Rachel Llamas","Alexa Escalante","META IG ORG","29 mayo","$250.00","$4,990.00","✔ Sí","","Lipoescultura"],
+      ["116","Merli Flores","Misael Miranda","Whatsapp Org","29 mayo","$250.00","$4,990.00","✔ Sí","","Lipoescultura"],
+      ["117","Ashley Lee","Alexa Escalante","META ADS IG","29 mayo","$500.00","$3,490.00","✔ Sí","120243583614920034","Rinoplastia primaria"],
+    ];
+    renderDashboard(demoRows);
+  }
+
+  // Iniciar al cargar
+  window.addEventListener('load', loadData);
+</script>
+</body>
+</html>
