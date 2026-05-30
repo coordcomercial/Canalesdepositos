@@ -8,76 +8,49 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --navy:#1a3a6b;--teal:#2bbfd4;
-  --bg:#f0f4f9;--surface:#fff;--border:#d0daea;--surface2:#e8eef7;
-  --text:#1a2640;--muted:#6b7fa0;
-  --c1:#3266ad;--c2:#1D9E75;--c3:#7F77DD;--c4:#D85A30;--c5:#D4537E;
-  --green:#00a854;--green-bg:#e6f7ef;--yellow:#d4960a;--yellow-bg:#fef8e6;
-}
+:root{--navy:#1a3a6b;--teal:#2bbfd4;--bg:#f0f4f9;--surface:#fff;--border:#d0daea;--surface2:#e8eef7;--text:#1a2640;--muted:#6b7fa0;--green:#00a854;--green-bg:#e6f7ef;--yellow:#d4960a;--yellow-bg:#fef8e6}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
-
-/* HEADER */
 header{background:var(--navy);border-bottom:3px solid var(--teal);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .logo{height:34px;object-fit:contain;filter:brightness(0) invert(1)}
 .htitle{color:rgba(255,255,255,.6);font-size:12px;border-left:1px solid rgba(255,255,255,.2);padding-left:14px;margin-left:8px}
-.hright{display:flex;align-items:center;gap:10px}
 #lupd{color:rgba(255,255,255,.4);font-size:11px;font-family:'DM Mono',monospace}
-
-/* MONTH TABS */
 .tabs-bar{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.1);padding:0 28px;display:flex;gap:4px}
 .tab{padding:10px 18px;font-size:13px;font-weight:500;color:rgba(255,255,255,.5);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:'DM Sans',sans-serif}
 .tab:hover{color:rgba(255,255,255,.8)}
 .tab.active{color:#fff;border-bottom-color:var(--teal)}
 .tab.soon{color:rgba(255,255,255,.25);cursor:default;font-size:12px}
-
-/* MAIN */
 main{padding:24px 28px;max-width:1400px;margin:0 auto}
-
-/* METRICS */
-.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden}
 .mc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.mc.c1::before{background:var(--c1)}.mc.c2::before{background:var(--c2)}.mc.c3::before{background:var(--c3)}.mc.c4::before{background:var(--c4)}.mc.c5::before{background:var(--c5)}
+.mc.c1::before{background:#3266ad}.mc.c2::before{background:#1D9E75}.mc.c3::before{background:#7F77DD}.mc.c4::before{background:#D85A30}.mc.c5::before{background:#D4537E}
 .ml{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
 .mv{font-size:24px;font-weight:600;color:var(--text);line-height:1;margin-bottom:3px}
 .ms{font-size:11px;color:var(--muted)}
-
-/* CARDS */
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.row3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
 .ct{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
 .cs{font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px}
-.cwrap{position:relative;width:100%}
 .slabel{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:24px 0 12px;display:flex;align-items:center;gap:10px}
 .slabel::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* LEGEND */
-.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:10px}
+.legend{display:flex;flex-wrap:wrap;gap:7px 14px;margin-bottom:10px}
 .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
 .ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
-
-/* RANK */
 .ranklist{display:flex;flex-direction:column}
 .rrow{display:grid;grid-template-columns:22px 1fr 50px;align-items:start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .rrow:last-child{border-bottom:none}
 .rn{font-size:11px;font-weight:600;color:var(--muted);font-family:'DM Mono',monospace;padding-top:2px}
 .rinfo{display:flex;flex-direction:column;gap:3px}
-.rname{font-size:13px;font-weight:500;color:var(--text)}
 .rbwrap{background:var(--surface2);border-radius:3px;height:5px;overflow:hidden;margin:2px 0}
 .rb{height:100%;border-radius:3px}
 .rcnt{font-size:10px;color:var(--muted)}
 .rpct{font-size:13px;font-weight:600;text-align:right;padding-top:2px;font-family:'DM Mono',monospace}
-
-/* CHANNEL BARS */
-.chbr{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:4px 0;gap:1px}
-.chseg{height:100%;min-width:2px}
+.chbr{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:3px 0;gap:1px}
+.chseg{height:100%}
 .chlbls{display:flex;gap:8px;flex-wrap:wrap;margin-top:3px}
 .chll{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:3px}
 .chld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-
-/* CHANNEL TABLE */
 .cht{width:100%;border-collapse:collapse;font-size:13px}
 .cht th{text-align:left;padding:7px 8px;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--border)}
 .cht th:not(:first-child){text-align:right}
@@ -90,49 +63,73 @@ main{padding:24px 28px;max-width:1400px;margin:0 auto}
 .pill.h{background:var(--green-bg);color:var(--green)}
 .pill.m{background:var(--yellow-bg);color:var(--yellow)}
 .pill.l{background:var(--surface2);color:var(--muted)}
-
 footer{background:var(--navy);padding:16px 28px;text-align:center;margin-top:32px}
 .ft{color:rgba(255,255,255,.35);font-size:11px}
 .fteal{color:var(--teal)}
-
 @media(max-width:860px){.row2,.row3{grid-template-columns:1fr}main{padding:16px}header{padding:0 16px}.tabs-bar{padding:0 16px}.htitle{display:none}}
 </style>
 </head>
 <body>
-
 <header>
   <div style="display:flex;align-items:center">
     <img class="logo" src="https://ciplastic.com/wp-content/uploads/2025/04/cropped-Logo_Footer-1.png-1.webp" alt="CIPlastic" onerror="this.style.display='none'">
     <span class="htitle">Dashboard de Adquisición — Canales y Procedimientos</span>
   </div>
-  <div class="hright">
-    <span id="lupd"></span>
-  </div>
+  <span id="lupd"></span>
 </header>
-
 <div class="tabs-bar">
-  <button class="tab active" onclick="switchMonth('mayo')">Mayo 2026</button>
-  <button class="tab soon" title="Próximamente">Junio 2026</button>
-  <button class="tab soon" title="Próximamente">Julio 2026</button>
+  <button class="tab active" onclick="switchMonth('mayo',this)">Mayo 2026</button>
+  <button class="tab soon">Junio 2026</button>
+  <button class="tab soon">Julio 2026</button>
 </div>
-
-<main>
-  <div id="dash"></div>
-</main>
-
+<main><div id="dash"></div></main>
 <footer><p class="ft"><span class="fteal">CIPLASTIC</span> · Sales Acquisition Dashboard · 2026</p></footer>
 
 <script>
-// ══════════════════════════════════════════════════
-//  DATOS POR MES — agrega nuevos meses aquí abajo
-// ══════════════════════════════════════════════════
-const MONTHS = {
+// ── COLORES ─────────────────────────────────────────
+const CH_COLORS = {'Meta Ads Pagado':'#3266ad','Orgánico Meta/WA':'#1D9E75','Google Ads':'#D85A30','Website':'#7F77DD','TikTok':'#D4537E','Px Ciplastic / Ref':'#888780','Otros':'#B4B2A9'};
+const PROC_COLORS = ['#3266ad','#1D9E75','#7F77DD','#D85A30','#D4537E','#885FAB','#2BA8AB','#D4860A','#5B8CCC','#888780'];
+const CH_BREAKDOWN = [{k:'meta',c:'#F59E0B',l:'Meta Ads'},{k:'organico',c:'#F87171',l:'Orgánico'},{k:'ciplastic',c:'#A78BFA',l:'Px Ciplastic'},{k:'otros',c:'#94A3B8',l:'Otros'}];
+
+// ── CLASIFICAR CANAL ────────────────────────────────
+function ch(src, adId) {
+  const s=(src||'').toUpperCase().trim(), a=(adId||'').toUpperCase().trim();
+  if(s.includes('META ADS')||s==='META ADS FB'||s==='META ADS IG'||s==='META ADS'||/^\d{10,}$/.test(a)||['ADS','CAMPAÑA','RINO','GLOW','SEPTOPLASTIA','INSTAGRAM ADS','SOCIAL MEDIA'].some(k=>a.includes(k))) return 'Meta Ads Pagado';
+  if(s.includes('META ORG')||s.includes('META IG ORG')||s.includes('WHATSAPP ORG')||s==='ORGANICO'||s==='ORGÁNICO'||s.includes('WA')||s.includes('WHATSAPP')) return 'Orgánico Meta/WA';
+  if(s.includes('GOOGLE')) return 'Google Ads';
+  if(s==='WEBSITE'||s==='WEB') return 'Website';
+  if(s.includes('TIKTOK')) return 'TikTok';
+  if(s.includes('PX CIPLASTIC')||s.includes('PX. CIPLASTIC')||s.includes('REF.')||s.includes('DR HERMES')||s.includes('DR.')||s.includes('RECOMENDACIÓN')||s.includes('ESPECTACULAR')) return 'Px Ciplastic / Ref';
+  return 'Otros';
+}
+
+// ── PROCESAR ────────────────────────────────────────
+function process(rows) {
+  const channels={}, cxMap={}, cxByCh={};
+  let dep=0, surg=0, count=0;
+  rows.forEach(function(r) {
+    if(r[3]===0 && r[4]===0) return;
+    var canal = ch(r[0],r[1]), cx=r[2], d=r[3], s=r[4];
+    if(!channels[canal]) channels[canal]={deposits:0,surgery:0,count:0};
+    channels[canal].deposits+=d; channels[canal].surgery+=s; channels[canal].count++;
+    cxMap[cx]=(cxMap[cx]||0)+1;
+    if(!cxByCh[cx]) cxByCh[cx]={meta:0,organico:0,ciplastic:0,otros:0};
+    if(canal==='Meta Ads Pagado') cxByCh[cx].meta++;
+    else if(canal==='Orgánico Meta/WA') cxByCh[cx].organico++;
+    else if(canal==='Px Ciplastic / Ref') cxByCh[cx].ciplastic++;
+    else cxByCh[cx].otros++;
+    dep+=d; surg+=s; count++;
+  });
+  return {channels,cxMap,cxByCh,dep,surg,count};
+}
+
+// ── DATOS ───────────────────────────────────────────
+var MONTHS = {
   mayo: {
-    label: 'Mayo 2026',
-    period: '1–29 Mayo 2026',
-    rows: [
-      ["META ADS FB","Campaña Easter Moment Rino","Rinoplastia Primaria",250,4590],
-      ["META IG ORG","","Rinoplastia Primaria",500,3790],
+    label:'Mayo 2026', period:'1–29 Mayo 2026',
+    rows:[
+      ["META ADS FB","Campaña Easter Moment Rino","Rinoplastia",250,4590],
+      ["META IG ORG","","Rinoplastia",500,3790],
       ["META ADS FB","120243032147940034","Ritidoplastia / Facelift",300,7190],
       ["META ADS IG","120241816426650034","Lipoabdominoplastia",250,6500],
       ["META ADS FB","120242286998210034","Rejuvenecimiento Facial",300,6590],
@@ -247,233 +244,144 @@ const MONTHS = {
       ["Google Adds","","Otros",250,3600],
       ["META IG ORG","","Lipoescultura / Liposucción",250,4990],
       ["Whatsapp Org","","Lipoescultura / Liposucción",250,4990],
-      ["META ADS IG","120243583614920034","Rinoplastia",500,3490],
+      ["META ADS IG","120243583614920034","Rinoplastia",500,3490]
     ]
   }
-  // ── AGREGA NUEVOS MESES AQUÍ ──────────────────
-  // junio: { label:'Junio 2026', period:'1–30 Junio 2026', rows:[ ... ] }
+  // Agrega junio aquí: junio:{label:'Junio 2026',period:'...',rows:[...]}
 };
 
-// ══════════════════════════════════════════════════
-//  CANALES
-// ══════════════════════════════════════════════════
-const CH_COLORS = {
-  'Meta Ads Pagado':'#3266ad',
-  'Orgánico Meta/WA':'#1D9E75',
-  'Google Ads':'#D85A30',
-  'Website':'#7F77DD',
-  'TikTok':'#D4537E',
-  'Px Ciplastic / Ref':'#888780',
-  'Otros':'#B4B2A9'
-};
-const PROC_COLORS = ['#3266ad','#1D9E75','#7F77DD','#D85A30','#D4537E','#885FAB','#2BA8AB','#D4860A','#5B8CCC','#888780'];
-
-function classifyChannel(src, adId) {
-  const s = (src||'').toUpperCase().trim();
-  const a = (adId||'').toUpperCase().trim();
-  const hasPaidId = /^\d{10,}$/.test(a);
-  const hasNamedAd = ['ADS','CAMPAÑA','RINO','GLOW','SEPTOPLASTIA','INSTAGRAM ADS','SOCIAL MEDIA'].some(k=>a.includes(k));
-  if(s.includes('META ADS')||s==='META ADS FB'||s==='META ADS IG'||s==='META ADS'||hasPaidId||hasNamedAd) return 'Meta Ads Pagado';
-  if(s.includes('META ORG')||s.includes('META IG ORG')||s.includes('WHATSAPP ORG')||s==='ORGANICO'||s==='ORGÁNICO'||s.includes('WA')) return 'Orgánico Meta/WA';
-  if(s.includes('GOOGLE')) return 'Google Ads';
-  if(s==='WEBSITE'||s==='WEB') return 'Website';
-  if(s.includes('TIKTOK')) return 'TikTok';
-  if(s.includes('PX CIPLASTIC')||s.includes('PX. CIPLASTIC')||s.includes('REF.')||s.includes('DR HERMES')||s.includes('DR.')||s.includes('RECOMENDACIÓN')||s.includes('ESPECTACULAR')) return 'Px Ciplastic / Ref';
-  return 'Otros';
+// ── CHARTS ──────────────────────────────────────────
+var charts = {};
+function destroyCharts() {
+  Object.values(charts).forEach(function(c){ try{c.destroy()}catch(e){} });
+  charts = {};
 }
 
-// ══════════════════════════════════════════════════
-//  PROCESAR
-// ══════════════════════════════════════════════════
-function processMonth(rows) {
-  const channels={}, cxMap={}, cxByChannel={};
-  let totalDep=0, totalSurgery=0;
-  rows.forEach(([src,adId,cx,dep,surgery])=>{
-    if(dep===0&&surgery===0) return;
-    const ch = classifyChannel(src,adId);
-    if(!channels[ch]) channels[ch]={deposits:0,surgery:0,count:0};
-    channels[ch].deposits+=dep; channels[ch].surgery+=surgery; channels[ch].count++;
-    cxMap[cx]=(cxMap[cx]||0)+1;
-    if(!cxByChannel[cx]) cxByChannel[cx]={meta:0,organico:0,ciplastic:0,otros:0};
-    if(ch==='Meta Ads Pagado') cxByChannel[cx].meta++;
-    else if(ch==='Orgánico Meta/WA') cxByChannel[cx].organico++;
-    else if(ch==='Px Ciplastic / Ref') cxByChannel[cx].ciplastic++;
-    else cxByChannel[cx].otros++;
-    totalDep+=dep; totalSurgery+=surgery;
-  });
-  return {channels,cxMap,cxByChannel,totalDep,totalSurgery,totalPatients:rows.filter(r=>r[3]>0||r[4]>0).length};
-}
-
-// ══════════════════════════════════════════════════
-//  CHARTS
-// ══════════════════════════════════════════════════
-let charts={};
-function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy()}catch(e){}});charts={};}
-
-// ══════════════════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════════════════
+// ── RENDER ──────────────────────────────────────────
 function render(monthKey) {
   destroyCharts();
-  const m = MONTHS[monthKey];
-  const d = processMonth(m.rows);
-  const {channels,cxMap,cxByChannel,totalDep,totalSurgery,totalPatients} = d;
-  const chKeys = Object.keys(channels).sort((a,b)=>channels[b].deposits-channels[a].deposits);
-  const cxSorted = Object.entries(cxMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  const cxTotal = Object.values(cxMap).reduce((a,b)=>a+b,0);
-  const metaDep = (channels['Meta Ads Pagado']||{deposits:0}).deposits;
-  const metaPx = (channels['Meta Ads Pagado']||{count:0}).count;
-  const orgPx = (channels['Orgánico Meta/WA']||{count:0}).count;
-  const ticket = totalPatients>0 ? Math.round(totalSurgery/totalPatients) : 0;
+  var m = MONTHS[monthKey];
+  var d = process(m.rows);
+  var chKeys = Object.keys(d.channels).sort(function(a,b){ return d.channels[b].deposits - d.channels[a].deposits; });
+  var cxSorted = Object.entries(d.cxMap).sort(function(a,b){ return b[1]-a[1]; }).slice(0,10);
+  var cxTotal = Object.values(d.cxMap).reduce(function(a,b){ return a+b; },0);
+  var metaDep = (d.channels['Meta Ads Pagado']||{deposits:0}).deposits;
+  var metaPx  = (d.channels['Meta Ads Pagado']||{count:0}).count;
+  var orgPx   = (d.channels['Orgánico Meta/WA']||{count:0}).count;
+  var ticket  = d.count>0 ? Math.round(d.surg/d.count) : 0;
 
-  // Legend HTML helper
-  const legHTML = (keys) => keys.map(k=>`<div class="li"><span class="ld" style="background:${CH_COLORS[k]||'#888'}"></span>${k}</div>`).join('');
-
-  document.getElementById('dash').innerHTML = `
-    <div class="slabel">resumen del período · ${m.period}</div>
-    <div class="metrics-grid">
-      <div class="mc c1"><div class="ml">Total Depósitos</div><div class="mv">$${totalDep.toLocaleString('en-US')}</div><div class="ms">${totalPatients} pacientes</div></div>
-      <div class="mc c2"><div class="ml">Venta Cirugías</div><div class="mv">$${totalSurgery.toLocaleString('en-US')}</div><div class="ms">USD estimado</div></div>
-      <div class="mc c3"><div class="ml">Meta Ads Pagado</div><div class="mv">$${metaDep.toLocaleString('en-US')}</div><div class="ms">${Math.round(metaPx/totalPatients*100)}% del total px</div></div>
-      <div class="mc c4"><div class="ml">Ticket Promedio</div><div class="mv">$${ticket.toLocaleString('en-US')}</div><div class="ms">por cirugía</div></div>
-      <div class="mc c5"><div class="ml">Orgánico Meta/WA</div><div class="mv">${orgPx} px</div><div class="ms">${Math.round(orgPx/totalPatients*100)}% del período</div></div>
-    </div>
-
-    <div class="slabel">canales de adquisición</div>
-    <div class="row3" style="margin-bottom:16px">
-      <div class="card">
-        <div class="ct">tabla de canales</div><div class="cs">Pacientes, depósitos y venta por canal</div>
-        <table class="cht">
-          <thead><tr><th>Canal</th><th>Px</th><th>%</th><th>Depósitos</th><th>Venta</th></tr></thead>
-          <tbody>${chKeys.map(k=>{
-            const c=channels[k];const pct=Math.round(c.count/totalPatients*100);
-            const cls=pct>=40?'h':pct>=15?'m':'l';
-            return `<tr><td><span class="cdot" style="background:${CH_COLORS[k]||'#888'}"></span>${k}</td><td>${c.count}</td><td><span class="pill ${cls}">${pct}%</span></td><td>$${c.deposits.toLocaleString('en-US')}</td><td>$${c.surgery.toLocaleString('en-US')}</td></tr>`;
-          }).join('')}</tbody>
-          <tfoot><tr class="tr"><td>Total</td><td>${totalPatients}</td><td>100%</td><td>$${totalDep.toLocaleString('en-US')}</td><td>$${totalSurgery.toLocaleString('en-US')}</td></tr></tfoot>
-        </table>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="card" style="flex:1">
-          <div class="ct">depósitos captados</div><div class="cs">Total USD por canal</div>
-          <div class="legend">${legHTML(chKeys)}</div>
-          <div class="cwrap" style="height:160px"><canvas id="cBar"></canvas></div>
-        </div>
-        <div class="card" style="flex:1">
-          <div class="ct">depósitos semanales</div><div class="cs">Volumen por semana</div>
-          <div class="cwrap" style="height:160px"><canvas id="cWeek"></canvas></div>
-        </div>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="ct">distribución de pacientes</div><div class="cs">% por canal</div>
-      <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap">
-        <div style="width:180px;height:180px;flex-shrink:0;position:relative"><canvas id="cPie"></canvas></div>
-        <div class="legend" style="flex:1;gap:10px 20px">${chKeys.map(k=>`<div class="li" style="font-size:13px"><span class="ld" style="background:${CH_COLORS[k]||'#888'};width:11px;height:11px"></span>${k} <strong style="color:var(--text)">${channels[k].count} px</strong> <span style="color:var(--muted)">(${Math.round(channels[k].count/totalPatients*100)}%)</span></div>`).join('')}</div>
-      </div>
-    </div>
-
-    <div class="slabel">procedimientos más vendidos</div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="ct">ranking</div><div class="cs">Por volumen de pacientes</div>
-      <div class="ranklist">${cxSorted.map(([name,count],i)=>{
-        const pct=Math.round(count/cxTotal*100);const bw=Math.round(count/cxSorted[0][1]*100);
-        return `<div class="rrow"><span class="rn">#${i+1}</span><div class="rinfo"><span class="rname">${name}</span><div class="rbwrap"><div class="rb" style="width:${bw}%;background:${PROC_COLORS[i]||'#888'}"></div></div><span class="rcnt">${count} pacientes</span></div><span class="rpct" style="color:${PROC_COLORS[i]||'#888'}">${pct}%</span></div>`;
-      }).join('')}</div>
-    </div>
-
-    <div class="slabel">procedimientos por canal de adquisición</div>
-    <div class="card" style="margin-bottom:20px">
-      <div class="ct">desglose por procedimiento</div><div class="cs">Origen del canal por tipo de cirugía</div>
-      <div class="ranklist">${cxSorted.map(([name,count],i)=>{
-        const pct=Math.round(count/cxTotal*100);const bw=Math.round(count/cxSorted[0][1]*100);
-        const ch=cxByChannel[name]||{meta:0,organico:0,ciplastic:0,otros:0};
-        const tot=ch.meta+ch.organico+ch.ciplastic+ch.otros||1;
-        const chCols=[
-          {k:'meta',c:'#E8B84B',l:'Meta Ads'},
-          {k:'organico',c:'#F97B6B',l:'Orgánico'},
-          {k:'ciplastic',c:'#A78BFA',l:'Px Ciplastic'},
-          {k:'otros',c:'#94A3B8',l:'Otros'},
-        ];
-        const segs=chCols.map(({k,c,l})=>{
-          const w=Math.round(ch[k]/tot*100);
-          return w>0?`<div class="chseg" style="flex:${w};background:${c}" title="${l}: ${ch[k]}"></div>`:'';
-        }).join('');
-        const lbls=chCols.filter(({k})=>ch[k]>0).map(({k,c,l})=>`<span class="chll"><span class="chld" style="background:${c}"></span>${l} ${ch[k]}</span>`).join('');
-        return `<div class="rrow"><span class="rn">#${i+1}</span><div class="rinfo" style="flex:1"><span class="rname">${name}</span><div class="rbwrap"><div class="rb" style="width:${bw}%;background:${PROC_COLORS[i]||'#888'}"></div></div><div class="chbr">${segs}</div><div class="chlbls">${lbls}</div></div><div style="text-align:right;min-width:55px"><div class="rpct" style="color:${PROC_COLORS[i]||'#888'}">${pct}%</div><div class="rcnt">${count} px</div></div></div>`;
-      }).join('')}
-    </div>
-    </div>
-  `;
-
-  // Semanas
-  const wkDep=[0,0,0,0,0];
-  m.rows.forEach(([,,,,],[,,dep])=>{});
-  // Calcular semanas por índice de fila
-  m.rows.forEach((r,i)=>{
-    const dep=r[3];
-    const w=i<23?0:i<46?1:i<69?2:i<92?3:4;
-    wkDep[w]+=dep;
+  // Semanas por índice de fila
+  var wkDep=[0,0,0,0,0];
+  m.rows.forEach(function(r,i){
+    var w = i<23?0 : i<46?1 : i<69?2 : i<92?3 : 4;
+    wkDep[w] += r[3];
   });
 
-  // Init charts after DOM paints — setTimeout 0 guarantees canvas exists
-  setTimeout(()=>{
-    const elBar = document.getElementById('cBar');
-    const elPie = document.getElementById('cPie');
-    const elWeek = document.getElementById('cWeek');
-    if(!elBar||!elPie||!elWeek){ console.error('Canvas not found'); return; }
+  // Build HTML
+  var metricsHTML =
+    mc('c1','Total Depósitos','$'+d.dep.toLocaleString('en-US'),d.count+' pacientes') +
+    mc('c2','Venta Cirugías','$'+d.surg.toLocaleString('en-US'),'USD estimado') +
+    mc('c3','Meta Ads Pagado','$'+metaDep.toLocaleString('en-US'),Math.round(metaPx/d.count*100)+'% del total px') +
+    mc('c4','Ticket Promedio','$'+ticket.toLocaleString('en-US'),'por cirugía') +
+    mc('c5','Orgánico Meta/WA',orgPx+' px',Math.round(orgPx/d.count*100)+'% del período');
 
-    charts.bar = new Chart(elBar,{
+  var legendBar = chKeys.map(function(k){ return '<div class="li"><span class="ld" style="background:'+( CH_COLORS[k]||'#888')+'"></span>'+k+'</div>'; }).join('');
+  var legendPie = chKeys.map(function(k){ return '<div class="li"><span class="ld" style="background:'+(CH_COLORS[k]||'#888')+'"></span>'+k+' <strong style="color:var(--text)">'+d.channels[k].count+'</strong> ('+Math.round(d.channels[k].count/d.count*100)+'%)</div>'; }).join('');
+
+  var tableRows = chKeys.map(function(k){
+    var c=d.channels[k], pct=Math.round(c.count/d.count*100), cls=pct>=40?'h':pct>=15?'m':'l';
+    return '<tr><td><span class="cdot" style="background:'+(CH_COLORS[k]||'#888')+'"></span>'+k+'</td><td>'+c.count+'</td><td><span class="pill '+cls+'">'+pct+'%</span></td><td>$'+c.deposits.toLocaleString('en-US')+'</td><td>$'+c.surgery.toLocaleString('en-US')+'</td></tr>';
+  }).join('');
+
+  var rankHTML = cxSorted.map(function(entry,i){
+    var name=entry[0], count=entry[1];
+    var pct=Math.round(count/cxTotal*100), bw=Math.round(count/cxSorted[0][1]*100);
+    return '<div class="rrow"><span class="rn">#'+(i+1)+'</span><div class="rinfo"><span style="font-size:13px;font-weight:500;color:var(--text)">'+name+'</span><div class="rbwrap"><div class="rb" style="width:'+bw+'%;background:'+(PROC_COLORS[i]||'#888')+'"></div></div><span class="rcnt">'+count+' pacientes</span></div><span class="rpct" style="color:'+(PROC_COLORS[i]||'#888')+'">'+pct+'%</span></div>';
+  }).join('');
+
+  var desgHTML = cxSorted.map(function(entry,i){
+    var name=entry[0], count=entry[1];
+    var pct=Math.round(count/cxTotal*100), bw=Math.round(count/cxSorted[0][1]*100);
+    var cb=d.cxByCh[name]||{meta:0,organico:0,ciplastic:0,otros:0};
+    var tot=cb.meta+cb.organico+cb.ciplastic+cb.otros||1;
+    var segs=CH_BREAKDOWN.map(function(x){ var w=Math.round(cb[x.k]/tot*100); return w>0?'<div class="chseg" style="flex:'+w+';background:'+x.c+'" title="'+x.l+': '+cb[x.k]+'"></div>':''; }).join('');
+    var lbls=CH_BREAKDOWN.filter(function(x){ return cb[x.k]>0; }).map(function(x){ return '<span class="chll"><span class="chld" style="background:'+x.c+'"></span>'+x.l+' '+cb[x.k]+'</span>'; }).join('');
+    return '<div class="rrow"><span class="rn">#'+(i+1)+'</span><div class="rinfo" style="flex:1"><span style="font-size:13px;font-weight:500;color:var(--text)">'+name+'</span><div class="rbwrap"><div class="rb" style="width:'+bw+'%;background:'+(PROC_COLORS[i]||'#888')+'"></div></div><div class="chbr">'+segs+'</div><div class="chlbls">'+lbls+'</div></div><div style="text-align:right;min-width:55px"><div class="rpct" style="color:'+(PROC_COLORS[i]||'#888')+'">'+pct+'%</div><div class="rcnt">'+count+' px</div></div></div>';
+  }).join('');
+
+  document.getElementById('dash').innerHTML =
+    '<div class="slabel">resumen del período · '+m.period+'</div>'+
+    '<div class="mgrid">'+metricsHTML+'</div>'+
+
+    '<div class="slabel">canales de adquisición</div>'+
+    '<div class="row2" style="margin-bottom:16px">'+
+      '<div class="card"><div class="ct">depósitos captados</div><div class="cs">Total USD por canal</div><div class="legend">'+legendBar+'</div><div style="position:relative;height:220px"><canvas id="cBar"></canvas></div></div>'+
+      '<div class="card"><div class="ct">depósitos semanales</div><div class="cs">Volumen por semana del mes</div><div style="position:relative;height:220px"><canvas id="cWeek"></canvas></div></div>'+
+    '</div>'+
+    '<div class="card" style="margin-bottom:16px">'+
+      '<div class="ct">distribución de pacientes</div><div class="cs">% por canal de adquisición</div>'+
+      '<div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">'+
+        '<div style="position:relative;width:200px;height:200px;flex-shrink:0"><canvas id="cPie"></canvas></div>'+
+        '<div class="legend" style="flex:1;gap:10px 20px">'+legendPie+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="card" style="margin-bottom:16px">'+
+      '<div class="ct">tabla de canales</div><div class="cs">Pacientes, depósitos y venta por canal</div>'+
+      '<table class="cht"><thead><tr><th>Canal</th><th>Px</th><th>%</th><th>Depósitos</th><th>Venta</th></tr></thead>'+
+      '<tbody>'+tableRows+'</tbody>'+
+      '<tfoot><tr class="tr"><td>Total</td><td>'+d.count+'</td><td>100%</td><td>$'+d.dep.toLocaleString('en-US')+'</td><td>$'+d.surg.toLocaleString('en-US')+'</td></tr></tfoot></table>'+
+    '</div>'+
+
+    '<div class="slabel">procedimientos más vendidos</div>'+
+    '<div class="card" style="margin-bottom:16px"><div class="ct">ranking</div><div class="cs">Por volumen de pacientes</div><div class="ranklist">'+rankHTML+'</div></div>'+
+
+    '<div class="slabel">procedimientos por canal de adquisición</div>'+
+    '<div class="card" style="margin-bottom:24px">'+
+      '<div class="ct">desglose por procedimiento</div>'+
+      '<div class="cs">Barra azul = total pacientes &nbsp;|&nbsp; '+
+      CH_BREAKDOWN.map(function(x){ return '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'+x.c+'"></span>'+x.l+'</span>'; }).join('')+
+      '</div>'+
+      '<div class="ranklist">'+desgHTML+'</div>'+
+    '</div>';
+
+  // ── CHARTS ──────────────────────────────────────
+  setTimeout(function(){
+    var elBar=document.getElementById('cBar');
+    var elWeek=document.getElementById('cWeek');
+    var elPie=document.getElementById('cPie');
+    if(!elBar||!elWeek||!elPie) return;
+
+    charts.bar = new Chart(elBar, {
       type:'bar',
-      data:{labels:chKeys,datasets:[{data:chKeys.map(k=>channels[k].deposits),backgroundColor:chKeys.map(k=>CH_COLORS[k]||'#888'),borderRadius:4,borderSkipped:false}]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toLocaleString('en-US')}}},
-        scales:{
-          x:{ticks:{font:{size:10},maxRotation:40,autoSkip:false},grid:{display:false}},
-          y:{ticks:{callback:v=>'$'+(v>=1000?Math.round(v/1000)+'k':v),font:{size:10}},grid:{color:'#e8eef7'}}
-        }
-      }
+      data:{labels:chKeys,datasets:[{data:chKeys.map(function(k){return d.channels[k].deposits;}),backgroundColor:chKeys.map(function(k){return CH_COLORS[k]||'#888';}),borderRadius:4,borderSkipped:false}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' $'+c.raw.toLocaleString('en-US');}}}},scales:{x:{ticks:{font:{size:10},maxRotation:35,autoSkip:false},grid:{display:false}},y:{ticks:{callback:function(v){return '$'+(v>=1000?Math.round(v/1000)+'k':v);},font:{size:10}},grid:{color:'#e8eef7'}}}}
     });
 
-    charts.pie = new Chart(elPie,{
-      type:'doughnut',
-      data:{labels:chKeys,datasets:[{data:chKeys.map(k=>channels[k].count),backgroundColor:chKeys.map(k=>CH_COLORS[k]||'#888'),borderWidth:2,borderColor:'#fff'}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.raw+' px ('+Math.round(c.raw/totalPatients*100)+'%)'}}}}
-    });
-
-    charts.week = new Chart(elWeek,{
+    charts.week = new Chart(elWeek, {
       type:'line',
-      data:{
-        labels:['Sem 1
-(1–7)','Sem 2
-(8–14)','Sem 3
-(15–21)','Sem 4
-(22–28)','Sem 5
-(29+)'],
-        datasets:[{data:wkDep,borderColor:'#3266ad',backgroundColor:'rgba(50,102,173,.08)',tension:.35,fill:true,pointRadius:5,pointBackgroundColor:'#3266ad',pointBorderColor:'#fff',pointBorderWidth:2}]
-      },
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toLocaleString('en-US')}}},
-        scales:{
-          x:{ticks:{font:{size:10}},grid:{display:false}},
-          y:{ticks:{callback:v=>'$'+(v>=1000?Math.round(v/1000)+'k':v),font:{size:10}},grid:{color:'#e8eef7'}}
-        }
-      }
+      data:{labels:['Sem 1 (1-7)','Sem 2 (8-14)','Sem 3 (15-21)','Sem 4 (22-28)','Sem 5 (29+)'],datasets:[{data:wkDep,borderColor:'#3266ad',backgroundColor:'rgba(50,102,173,.08)',tension:.35,fill:true,pointRadius:5,pointBackgroundColor:'#3266ad',pointBorderColor:'#fff',pointBorderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' $'+c.raw.toLocaleString('en-US');}}}},scales:{x:{ticks:{font:{size:10}},grid:{display:false}},y:{ticks:{callback:function(v){return '$'+(v>=1000?Math.round(v/1000)+'k':v);},font:{size:10}},grid:{color:'#e8eef7'}}}}
     });
-  }, 0);
 
-  document.getElementById('lupd').textContent = m.label + ' · ' + new Date().toLocaleTimeString('es-MX');
+    charts.pie = new Chart(elPie, {
+      type:'doughnut',
+      data:{labels:chKeys,datasets:[{data:chKeys.map(function(k){return d.channels[k].count;}),backgroundColor:chKeys.map(function(k){return CH_COLORS[k]||'#888';}),borderWidth:2,borderColor:'#fff'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+c.label+': '+c.raw+' px ('+Math.round(c.raw/d.count*100)+'%)';}}}}}
+    });
+  }, 50);
+
+  document.getElementById('lupd').textContent = m.label+' · '+new Date().toLocaleTimeString('es-MX');
 }
 
-function switchMonth(key) {
-  if(!MONTHS[key]) return;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  event.target.classList.add('active');
+function mc(cls,label,val,sub){ return '<div class="mc '+cls+'"><div class="ml">'+label+'</div><div class="mv">'+val+'</div><div class="ms">'+sub+'</div></div>'; }
+
+function switchMonth(key,btn) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
   render(key);
 }
 
-window.addEventListener('load', ()=> render('mayo'));
+window.onload = function(){ render('mayo'); };
 </script>
 </body>
 </html>
