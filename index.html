@@ -279,7 +279,7 @@ function render(monthKey) {
   var m = MONTHS[monthKey];
   var d = process(m.rows);
   var chKeys = Object.keys(d.channels).sort(function(a,b){ return d.channels[b].deposits-d.channels[a].deposits; });
-  var cxSorted = Object.entries(d.cxMap).sort(function(a,b){ return b[1]-a[1]; }).slice(0,10);
+  var cxSorted = Object.entries(d.cxMap).filter(function(e){ return e[0]!=='Otros'; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,10);
   var cxTotal = Object.values(d.cxMap).reduce(function(a,b){ return a+b; },0);
   var metaDep = (d.channels['Meta Ads Pagado']||{deposits:0}).deposits;
   var metaPx  = (d.channels['Meta Ads Pagado']||{count:0}).count;
@@ -435,6 +435,7 @@ function render(monthKey) {
       '<div class="ct">ventas por agente</div>'+
       '<div class="cs">% de cada agente sobre el total de ese procedimiento</div>'+
       '<table class="cht"><thead>'+agTableHead+'</thead><tbody>'+agTableRows+'</tbody><tfoot>'+agTableFoot+'</tfoot></table>'+
+    '<div class="otros-note"><strong>Px Ciplastic</strong> incluye: pacientes referidos internamente, referencias del Dr. Hermes, pacientes recurrentes de CIPlastic y casos sin agente asignado.</div>'+
     '</div>'+
 
     '<div class="slabel">procedimientos por canal de adquisición</div>'+
