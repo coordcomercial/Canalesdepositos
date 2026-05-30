@@ -93,7 +93,7 @@ footer{background:var(--navy);padding:16px 28px;text-align:center;margin-top:32p
 var CH_COLORS = {'Meta Ads Pagado':'#3266ad','Orgánico Meta/WA':'#1D9E75','Google Ads':'#D85A30','Website':'#7F77DD','TikTok':'#D4537E','Px Ciplastic / Ref':'#888780','Otros':'#B4B2A9'};
 var PROC_COLORS = ['#3266ad','#1D9E75','#7F77DD','#D85A30','#D4537E','#885FAB','#2BA8AB','#D4860A','#5B8CCC','#888780'];
 var CH_BREAKDOWN = [{k:'meta',c:'#F59E0B',l:'Meta Ads'},{k:'organico',c:'#F87171',l:'Orgánico'},{k:'ciplastic',c:'#A78BFA',l:'Px Ciplastic'},{k:'otros',c:'#94A3B8',l:'Otros'}];
-var AGENT_COLORS = {'Misael':'#3266ad','Alexa':'#1D9E75','Pedro':'#D85A30','Karina':'#7F77DD','Equipo':'#B4B2A9'};
+var AGENT_COLORS = {'Px Ciplastic':'#888780','Pedro':'#D85A30','Misael':'#3266ad','Alexa':'#1D9E75'};
 
 // ── CLASIFICAR CANAL ────────────────────────────────
 function getCanal(src, adId) {
@@ -108,13 +108,13 @@ function getCanal(src, adId) {
 }
 
 function shortAgent(a) {
-  if(!a) return 'Equipo';
+  if(!a) return 'Px Ciplastic';
   var n=a.trim().split(' ')[0];
   if(n==='Misael'||n==='Msael') return 'Misael';
   if(n==='Alexa') return 'Alexa';
   if(n==='Pedro') return 'Pedro';
-  if(n==='Karina') return 'Karina';
-  return 'Equipo';
+  // Karina, Equipo, Px Ciplastic → Px Ciplastic
+  return 'Px Ciplastic';
 }
 
 // ── PROCESAR ────────────────────────────────────────
@@ -123,7 +123,6 @@ function process(rows) {
   var channels={}, cxMap={}, cxByCh={}, cxByAgent={};
   var dep=0, surg=0, count=0;
   rows.forEach(function(r) {
-    if(r[3]===0 && r[4]===0) return;
     var canal=getCanal(r[0],r[1]), cx=r[2], d=r[3], s=r[4], ag=shortAgent(r[5]);
     if(!channels[canal]) channels[canal]={deposits:0,surgery:0,count:0};
     channels[canal].deposits+=d; channels[canal].surgery+=s; channels[canal].count++;
@@ -155,7 +154,7 @@ var MONTHS = {
       ["META ADS FB","120241816426690034","Lipoabdominoplastia",250,6500,"Alexa Escalante"],
       ["META ADS IG","120243036245730034","Mastopexia / Mamoplastia",250,6690,"Misael Miranda"],
       ["META ADS IG","120241418111840034","Ritidoplastia / Facelift",250,10000,"Alexa Escalante"],
-      ["Px CIPLASTIC","","Lipoescultura / Liposucción",250,6200,"Equipo"],
+      ["Px CIPLASTIC","","Lipoescultura / Liposucción",250,6200,"Px Ciplastic"],
       ["META ORG WA","","Lipoescultura / Liposucción",250,7990,"Pedro Baca"],
       ["META ADS IG","120243583614920034","Rinoplastia",250,3790,"Alexa Escalante"],
       ["META ADS IG","","Lipoabdominoplastia",250,7500,"Misael Miranda"],
@@ -165,7 +164,7 @@ var MONTHS = {
       ["META ORG WA","","Rinoplastia",250,3790,"Alexa Escalante"],
       ["Website","","Rinoplastia",300,3790,"Misael Miranda"],
       ["META ORG WA","","Rinoplastia",250,3790,"Alexa Escalante"],
-      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,3600,"Equipo"],
+      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,3600,"Px Ciplastic"],
       ["META ADS FB","","Lipoescultura / Liposucción",250,4600,"Alexa Escalante"],
       ["META ORG WA","FB Ads | Rinoseptoplastia","Rinoseptoplastia",250,4160,"Alexa Escalante"],
       ["META ORG WA","","Rinoplastia",250,4440,"Karina Sifuentes"],
@@ -179,8 +178,8 @@ var MONTHS = {
       ["META ADS IG","","Lipoabdominoplastia",250,10990,"Misael Miranda"],
       ["META ADS IG","120245948781620034","Rinoplastia",250,3790,"Alexa Escalante"],
       ["META ADS FB","","Mastopexia / Mamoplastia",250,7200,"Pedro Baca"],
-      ["Px. CIPLASTIC","","Mastopexia / Mamoplastia",250,11580,"Equipo"],
-      ["META ORG WA","","Lipoabdominoplastia",250,6690,"Equipo"],
+      ["Px. CIPLASTIC","","Mastopexia / Mamoplastia",250,11580,"Px Ciplastic"],
+      ["META ORG WA","","Lipoabdominoplastia",250,6690,"Px Ciplastic"],
       ["META ADS IG","","Rinoplastia",250,4290,"Misael Miranda"],
       ["Google Ads","","Lipoabdominoplastia",250,7280,"Pedro Baca"],
       ["META ORG WA","","Mastopexia / Mamoplastia",300,7090,"Pedro Baca"],
@@ -188,16 +187,16 @@ var MONTHS = {
       ["META ORG WA","","Rinoplastia",250,3790,"Alexa Escalante"],
       ["META ADS IG","120243583614920034","Rinoplastia",250,4190,"Alexa Escalante"],
       ["META ADS FB","120242287911820034","Lipoescultura / Liposucción",250,6400,"Misael Miranda"],
-      ["Ref. Dr Hermes","","Mastopexia / Mamoplastia",5590,5590,"Equipo"],
+      ["Ref. Dr Hermes","","Mastopexia / Mamoplastia",5590,5590,"Px Ciplastic"],
       ["META ORG WA","","Mastopexia / Mamoplastia",500,4590,"Misael Miranda"],
       ["META ORG WA","","Ritidoplastia / Facelift",250,10980,"Misael Miranda"],
       ["META ADS IG","120243583614920034","Rinoplastia",250,4790,"Misael Miranda"],
       ["META ADS FB","120241418111840034","Lipoescultura / Liposucción",5020,7600,"Alexa Escalante"],
-      ["Ref. Dr Hermes","","Lipoabdominoplastia",270,0,"Equipo"],
+      ["Ref. Dr Hermes","","Lipoabdominoplastia",270,0,"Px Ciplastic"],
       ["WEBSITE","","Lipoabdominoplastia",250,4590,"Alexa Escalante"],
       ["META IG ORG","","Lipoabdominoplastia",250,6990,"Alexa Escalante"],
       ["Espectacular","","Ritidoplastia / Facelift",250,13770,"Pedro Baca"],
-      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,4590,"Equipo"],
+      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,4590,"Px Ciplastic"],
       ["META IG ORG","","Mastopexia / Mamoplastia",250,4590,"Misael Miranda"],
       ["META IG ORG","","Lipoescultura / Liposucción",500,4600,"Alexa Escalante"],
       ["META ORG WA","","Rinoseptoplastia",250,4190,"Alexa Escalante"],
@@ -232,7 +231,7 @@ var MONTHS = {
       ["META IG ORG","","Rinoplastia",250,3830,"Pedro Baca"],
       ["Meta Ads","120243041908690034","Rinoplastia",250,3490,"Pedro Baca"],
       ["META ORG WA","","Rinoplastia",250,3950,"Pedro Baca"],
-      ["DR HERMES","","Otros",1105,0,"Equipo"],
+      ["DR HERMES","","Otros",1105,0,"Px Ciplastic"],
       ["META ADS FB","120242286998210034","Mastopexia / Mamoplastia",250,12200,"Alexa Escalante"],
       ["Organico","","Abdominoplastia",250,6500,"Alexa Escalante"],
       ["META ADS IG","120242286998210034","Lipoescultura / Liposucción",250,5490,"Pedro Baca"],
@@ -257,7 +256,7 @@ var MONTHS = {
       ["","","Ritidoplastia / Facelift",500,9890,"Pedro Baca"],
       ["","","Blefaroplastia",250,3290,"Pedro Baca"],
       ["Whatsapp Org","","Rinoplastia",250,3632,"Alexa Escalante"],
-      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,3390,"Equipo"],
+      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,3390,"Px Ciplastic"],
       ["Google Adds","","Otros",250,3600,"Pedro Baca"],
       ["META IG ORG","","Lipoescultura / Liposucción",250,4990,"Alexa Escalante"],
       ["Whatsapp Org","","Lipoescultura / Liposucción",250,4990,"Misael Miranda"],
@@ -338,14 +337,9 @@ function render(monthKey) {
   }).join('');
 
   // ── Tabla agentes por procedimiento ──
-  // Collect all agents present
-  var agentSet = {};
-  cxSorted.forEach(function(entry){
-    var ag = d.cxByAgent[entry[0]]||{};
-    Object.keys(ag).forEach(function(a){ agentSet[a]=1; });
-  });
-  var agents = Object.keys(agentSet).sort();
-  var agColors = ['#3266ad','#1D9E75','#D85A30','#7F77DD','#B4B2A9'];
+  // Fixed agent column order as requested
+  var agents = ['Px Ciplastic','Pedro','Misael','Alexa'];
+  var agColors = ['#888780','#D85A30','#3266ad','#1D9E75'];
 
   var agTableHead = '<tr><th>Procedimiento</th><th>Total</th>'+
     agents.map(function(a,i){ return '<th style="color:'+(agColors[i]||'#888')+'">'+a+'</th>'; }).join('')+
