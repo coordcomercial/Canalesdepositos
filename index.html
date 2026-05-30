@@ -416,27 +416,52 @@ function render(monthKey) {
     wkDep[w]+=dep;
   });
 
-  requestAnimationFrame(()=>{
-    // Bar
-    charts.bar = new Chart(document.getElementById('cBar'),{
+  // Init charts after DOM paints — setTimeout 0 guarantees canvas exists
+  setTimeout(()=>{
+    const elBar = document.getElementById('cBar');
+    const elPie = document.getElementById('cPie');
+    const elWeek = document.getElementById('cWeek');
+    if(!elBar||!elPie||!elWeek){ console.error('Canvas not found'); return; }
+
+    charts.bar = new Chart(elBar,{
       type:'bar',
       data:{labels:chKeys,datasets:[{data:chKeys.map(k=>channels[k].deposits),backgroundColor:chKeys.map(k=>CH_COLORS[k]||'#888'),borderRadius:4,borderSkipped:false}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toLocaleString('en-US')}}},scales:{x:{ticks:{font:{size:11},maxRotation:35,autoSkip:false},grid:{display:false}},y:{ticks:{callback:v=>'$'+(v>=1000?Math.round(v/1000)+'k':v),font:{size:11}},grid:{color:'#e8eef7'}}}}
-    });
-    // Pie
-    charts.pie = new Chart(document.getElementById('cPie'),{
-      type:'doughnut',
-      data:{labels:chKeys,datasets:[{data:chKeys.map(k=>channels[k].count),backgroundColor:chKeys.map(k=>CH_COLORS[k]||'#888'),borderWidth:2,borderColor:'#fff'}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.raw+' px ('+Math.round(c.raw/totalPatients*100)+'%)'}}}}
-    });
-    // Week
-    charts.week = new Chart(document.getElementById('cWeek'),{
-      type:'line',
-      data:{labels:['Sem 1 (1–7)','Sem 2 (8–14)','Sem 3 (15–21)','Sem 4 (22–28)','Sem 5 (29+)'],datasets:[{data:wkDep,borderColor:'#3266ad',backgroundColor:'rgba(50,102,173,.07)',tension:.35,fill:true,pointRadius:5,pointBackgroundColor:'#3266ad',pointBorderColor:'#fff',pointBorderWidth:2}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toLocaleString('en-US')}}},scales:{x:{ticks:{font:{size:11}},grid:{display:false}},y:{ticks:{callback:v=>'$'+(v>=1000?Math.round(v/1000)+'k':v),font:{size:11}},grid:{color:'#e8eef7'}}}}
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toLocaleString('en-US')}}},
+        scales:{
+          x:{ticks:{font:{size:10},maxRotation:40,autoSkip:false},grid:{display:false}},
+          y:{ticks:{callback:v=>'$'+(v>=1000?Math.round(v/1000)+'k':v),font:{size:10}},grid:{color:'#e8eef7'}}
+        }
+      }
     });
 
-  });
+    charts.pie = new Chart(elPie,{
+      type:'doughnut',
+      data:{labels:chKeys,datasets:[{data:chKeys.map(k=>channels[k].count),backgroundColor:chKeys.map(k=>CH_COLORS[k]||'#888'),borderWidth:2,borderColor:'#fff'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.raw+' px ('+Math.round(c.raw/totalPatients*100)+'%)'}}}}
+    });
+
+    charts.week = new Chart(elWeek,{
+      type:'line',
+      data:{
+        labels:['Sem 1
+(1–7)','Sem 2
+(8–14)','Sem 3
+(15–21)','Sem 4
+(22–28)','Sem 5
+(29+)'],
+        datasets:[{data:wkDep,borderColor:'#3266ad',backgroundColor:'rgba(50,102,173,.08)',tension:.35,fill:true,pointRadius:5,pointBackgroundColor:'#3266ad',pointBorderColor:'#fff',pointBorderWidth:2}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toLocaleString('en-US')}}},
+        scales:{
+          x:{ticks:{font:{size:10}},grid:{display:false}},
+          y:{ticks:{callback:v=>'$'+(v>=1000?Math.round(v/1000)+'k':v),font:{size:10}},grid:{color:'#e8eef7'}}
+        }
+      }
+    });
+  }, 0);
 
   document.getElementById('lupd').textContent = m.label + ' · ' + new Date().toLocaleTimeString('es-MX');
 }
