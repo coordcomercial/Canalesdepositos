@@ -28,10 +28,10 @@ main{padding:24px 28px;max-width:1400px;margin:0 auto}
 .mv{font-size:24px;font-weight:600;color:var(--text);line-height:1;margin-bottom:3px}
 .ms{font-size:11px;color:var(--muted)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
 .ct{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
 .cs{font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px}
+.cs-note{font-size:11px;color:var(--muted);margin-bottom:14px;font-style:italic}
 .slabel{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:24px 0 12px;display:flex;align-items:center;gap:10px}
 .slabel::after{content:'';flex:1;height:1px;background:var(--border)}
 .legend{display:flex;flex-wrap:wrap;gap:7px 14px;margin-bottom:10px}
@@ -52,21 +52,24 @@ main{padding:24px 28px;max-width:1400px;margin:0 auto}
 .chll{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:3px}
 .chld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .cht{width:100%;border-collapse:collapse;font-size:13px}
-.cht th{text-align:left;padding:7px 8px;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--border)}
+.cht th{text-align:left;padding:8px 10px;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--border);white-space:nowrap}
 .cht th:not(:first-child){text-align:right}
-.cht td{padding:9px 8px;border-bottom:1px solid var(--border);color:var(--text)}
-.cht td:not(:first-child){text-align:right;font-family:'DM Mono',monospace;font-size:12px}
+.cht td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text);font-size:12px}
+.cht td:not(:first-child){text-align:right;font-family:'DM Mono',monospace;font-size:11px}
 .cht tr:last-child td{border-bottom:none}
 .cht .tr td{font-weight:600;color:var(--navy);border-top:2px solid var(--border)}
+.cht .trsub td{font-size:11px;color:var(--muted)}
 .cdot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:6px;vertical-align:middle}
 .pill{display:inline-block;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:500}
 .pill.h{background:var(--green-bg);color:var(--green)}
 .pill.m{background:var(--yellow-bg);color:var(--yellow)}
 .pill.l{background:var(--surface2);color:var(--muted)}
+.ag-bar{display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-right:4px}
+.otros-note{font-size:10px;color:var(--muted);background:var(--surface2);border-radius:6px;padding:6px 10px;margin-top:8px;line-height:1.6}
 footer{background:var(--navy);padding:16px 28px;text-align:center;margin-top:32px}
 .ft{color:rgba(255,255,255,.35);font-size:11px}
 .fteal{color:var(--teal)}
-@media(max-width:860px){.row2,.row3{grid-template-columns:1fr}main{padding:16px}header{padding:0 16px}.tabs-bar{padding:0 16px}.htitle{display:none}}
+@media(max-width:860px){.row2{grid-template-columns:1fr}main{padding:16px}header{padding:0 16px}.tabs-bar{padding:0 16px}.htitle{display:none}}
 </style>
 </head>
 <body>
@@ -87,14 +90,15 @@ footer{background:var(--navy);padding:16px 28px;text-align:center;margin-top:32p
 
 <script>
 // ── COLORES ─────────────────────────────────────────
-const CH_COLORS = {'Meta Ads Pagado':'#3266ad','Orgánico Meta/WA':'#1D9E75','Google Ads':'#D85A30','Website':'#7F77DD','TikTok':'#D4537E','Px Ciplastic / Ref':'#888780','Otros':'#B4B2A9'};
-const PROC_COLORS = ['#3266ad','#1D9E75','#7F77DD','#D85A30','#D4537E','#885FAB','#2BA8AB','#D4860A','#5B8CCC','#888780'];
-const CH_BREAKDOWN = [{k:'meta',c:'#F59E0B',l:'Meta Ads'},{k:'organico',c:'#F87171',l:'Orgánico'},{k:'ciplastic',c:'#A78BFA',l:'Px Ciplastic'},{k:'otros',c:'#94A3B8',l:'Otros'}];
+var CH_COLORS = {'Meta Ads Pagado':'#3266ad','Orgánico Meta/WA':'#1D9E75','Google Ads':'#D85A30','Website':'#7F77DD','TikTok':'#D4537E','Px Ciplastic / Ref':'#888780','Otros':'#B4B2A9'};
+var PROC_COLORS = ['#3266ad','#1D9E75','#7F77DD','#D85A30','#D4537E','#885FAB','#2BA8AB','#D4860A','#5B8CCC','#888780'];
+var CH_BREAKDOWN = [{k:'meta',c:'#F59E0B',l:'Meta Ads'},{k:'organico',c:'#F87171',l:'Orgánico'},{k:'ciplastic',c:'#A78BFA',l:'Px Ciplastic'},{k:'otros',c:'#94A3B8',l:'Otros'}];
+var AGENT_COLORS = {'Misael':'#3266ad','Alexa':'#1D9E75','Pedro':'#D85A30','Karina':'#7F77DD','Equipo':'#B4B2A9'};
 
 // ── CLASIFICAR CANAL ────────────────────────────────
-function ch(src, adId) {
-  const s=(src||'').toUpperCase().trim(), a=(adId||'').toUpperCase().trim();
-  if(s.includes('META ADS')||s==='META ADS FB'||s==='META ADS IG'||s==='META ADS'||/^\d{10,}$/.test(a)||['ADS','CAMPAÑA','RINO','GLOW','SEPTOPLASTIA','INSTAGRAM ADS','SOCIAL MEDIA'].some(k=>a.includes(k))) return 'Meta Ads Pagado';
+function getCanal(src, adId) {
+  var s=(src||'').toUpperCase().trim(), a=(adId||'').toUpperCase().trim();
+  if(s.includes('META ADS')||s==='META ADS FB'||s==='META ADS IG'||s==='META ADS'||/^\d{10,}$/.test(a)||['ADS','CAMPAÑA','RINO','GLOW','SEPTOPLASTIA','INSTAGRAM ADS','SOCIAL MEDIA'].some(function(k){return a.includes(k);})) return 'Meta Ads Pagado';
   if(s.includes('META ORG')||s.includes('META IG ORG')||s.includes('WHATSAPP ORG')||s==='ORGANICO'||s==='ORGÁNICO'||s.includes('WA')||s.includes('WHATSAPP')) return 'Orgánico Meta/WA';
   if(s.includes('GOOGLE')) return 'Google Ads';
   if(s==='WEBSITE'||s==='WEB') return 'Website';
@@ -103,13 +107,24 @@ function ch(src, adId) {
   return 'Otros';
 }
 
+function shortAgent(a) {
+  if(!a) return 'Equipo';
+  var n=a.trim().split(' ')[0];
+  if(n==='Misael'||n==='Msael') return 'Misael';
+  if(n==='Alexa') return 'Alexa';
+  if(n==='Pedro') return 'Pedro';
+  if(n==='Karina') return 'Karina';
+  return 'Equipo';
+}
+
 // ── PROCESAR ────────────────────────────────────────
+// row format: [src, adId, cx, dep, surg, agent]
 function process(rows) {
-  const channels={}, cxMap={}, cxByCh={};
-  let dep=0, surg=0, count=0;
+  var channels={}, cxMap={}, cxByCh={}, cxByAgent={};
+  var dep=0, surg=0, count=0;
   rows.forEach(function(r) {
     if(r[3]===0 && r[4]===0) return;
-    var canal = ch(r[0],r[1]), cx=r[2], d=r[3], s=r[4];
+    var canal=getCanal(r[0],r[1]), cx=r[2], d=r[3], s=r[4], ag=shortAgent(r[5]);
     if(!channels[canal]) channels[canal]={deposits:0,surgery:0,count:0};
     channels[canal].deposits+=d; channels[canal].surgery+=s; channels[canal].count++;
     cxMap[cx]=(cxMap[cx]||0)+1;
@@ -118,133 +133,135 @@ function process(rows) {
     else if(canal==='Orgánico Meta/WA') cxByCh[cx].organico++;
     else if(canal==='Px Ciplastic / Ref') cxByCh[cx].ciplastic++;
     else cxByCh[cx].otros++;
+    if(!cxByAgent[cx]) cxByAgent[cx]={};
+    cxByAgent[cx][ag]=(cxByAgent[cx][ag]||0)+1;
     dep+=d; surg+=s; count++;
   });
-  return {channels,cxMap,cxByCh,dep,surg,count};
+  return {channels,cxMap,cxByCh,cxByAgent,dep,surg,count};
 }
 
-// ── DATOS ───────────────────────────────────────────
+// ── DATOS — formato: [src, adId, cx, dep, surg, agente] ──────────
 var MONTHS = {
   mayo: {
     label:'Mayo 2026', period:'1–29 Mayo 2026',
     rows:[
-      ["META ADS FB","Campaña Easter Moment Rino","Rinoplastia",250,4590],
-      ["META IG ORG","","Rinoplastia",500,3790],
-      ["META ADS FB","120243032147940034","Ritidoplastia / Facelift",300,7190],
-      ["META ADS IG","120241816426650034","Lipoabdominoplastia",250,6500],
-      ["META ADS FB","120242286998210034","Rejuvenecimiento Facial",300,6590],
-      ["META ADS IG","120242286952330034","Ritidoplastia / Facelift",250,5690],
-      ["META ADS FB","120243037425840034","Lipoabdominoplastia",250,5600],
-      ["META ADS FB","120241816426690034","Lipoabdominoplastia",250,6500],
-      ["META ADS IG","120243036245730034","Mastopexia / Mamoplastia",250,6690],
-      ["META ADS IG","120241418111840034","Ritidoplastia / Facelift",250,10000],
-      ["Px CIPLASTIC","","Lipoescultura / Liposucción",250,6200],
-      ["META ORG WA","","Lipoescultura / Liposucción",250,7990],
-      ["META ADS IG","120243583614920034","Rinoplastia",250,3790],
-      ["META ADS IG","","Lipoabdominoplastia",250,7500],
-      ["META ORG WA","","Transplante Capilar",250,5500],
-      ["META ORG WA","","Lipoescultura / Liposucción",250,2390],
-      ["META ORG WA","","Mastopexia / Mamoplastia",250,5290],
-      ["META ORG WA","","Rinoplastia",250,3790],
-      ["Website","","Rinoplastia",300,3790],
-      ["META ORG WA","","Rinoplastia",250,3790],
-      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,3600],
-      ["META ADS FB","","Lipoescultura / Liposucción",250,4600],
-      ["META ORG WA","FB Ads | Rinoseptoplastia","Rinoseptoplastia",250,4160],
-      ["META ORG WA","","Rinoplastia",250,4440],
-      ["META ORG WA","","Endolift",500,3490],
-      ["META ORG WA","Instagram Ads-Rinoplastia","Rinoplastia",250,3490],
-      ["META ADS IG","","Lipoabdominoplastia",500,13000],
-      ["META ORG WA","","Rinoplastia",250,3500],
-      ["META ADS IG","120243041908690034","Rinoplastia",250,4490],
-      ["META ORG WA","","Lipoescultura / Liposucción",250,10000],
-      ["Px Ciplastic","","Lipoabdominoplastia",300,14830],
-      ["META ADS IG","","Lipoabdominoplastia",250,10990],
-      ["META ADS IG","120245948781620034","Rinoplastia",250,3790],
-      ["META ADS FB","","Mastopexia / Mamoplastia",250,7200],
-      ["Px. CIPLASTIC","","Mastopexia / Mamoplastia",250,11580],
-      ["META ORG WA","","Lipoabdominoplastia",250,6690],
-      ["META ADS IG","","Rinoplastia",250,4290],
-      ["Google Ads","","Lipoabdominoplastia",250,7280],
-      ["META ORG WA","","Mastopexia / Mamoplastia",300,7090],
-      ["META IG ORG","","Mastopexia / Mamoplastia",250,4590],
-      ["META ORG WA","","Rinoplastia",250,3790],
-      ["META ADS IG","120243583614920034","Rinoplastia",250,4190],
-      ["META ADS FB","120242287911820034","Lipoescultura / Liposucción",250,6400],
-      ["Ref. Dr Hermes","","Mastopexia / Mamoplastia",5590,5590],
-      ["META ORG WA","","Mastopexia / Mamoplastia",500,4590],
-      ["META ORG WA","","Ritidoplastia / Facelift",250,10980],
-      ["META ADS IG","120243583614920034","Rinoplastia",250,4790],
-      ["META ADS FB","120241418111840034","Lipoescultura / Liposucción",5020,7600],
-      ["Ref. Dr Hermes","","Lipoabdominoplastia",270,0],
-      ["WEBSITE","","Lipoabdominoplastia",250,4590],
-      ["META IG ORG","","Lipoabdominoplastia",250,6990],
-      ["Espectacular","","Ritidoplastia / Facelift",250,13770],
-      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,4590],
-      ["META IG ORG","","Mastopexia / Mamoplastia",250,4590],
-      ["META IG ORG","","Lipoescultura / Liposucción",500,4600],
-      ["META ORG WA","","Rinoseptoplastia",250,4190],
-      ["META ORG WA","","Rinoseptoplastia",250,4190],
-      ["META ORG WA","","Rinoplastia",250,3790],
-      ["META ORG WA","META ADS FB | Glow Forward","Rinoplastia",250,4490],
-      ["META ADS IG","120242286998210034","Rinoplastia",250,3390],
-      ["META ADS FB","122198754788388150","Rinoplastia",500,7570],
-      ["META ADS FB","122199310430388150","Rinoseptoplastia",250,3830],
-      ["META ADS IG","120243041908690034","Rinoseptoplastia",250,4290],
-      ["META IG ORG","","Mastopexia / Mamoplastia",250,4590],
-      ["META ORG WA","","Rinoplastia",500,3830],
-      ["WEBSITE","","Lipoescultura / Liposucción",250,5500],
-      ["META ADS FB","120242286952330034","Rinoplastia",250,6090],
-      ["TikTok","","Ritidoplastia / Facelift",250,7590],
-      ["META ORG WA","","Mastopexia / Mamoplastia",250,4661],
-      ["META ADS IG","120243041908690034","Rinoseptoplastia",250,4190],
-      ["META ADS IG","120246597906580034","Rinoplastia",250,3760],
-      ["META ADS FB","120241816426610034","Ritidoplastia / Facelift",250,9000],
-      ["META IG ORG","","Mastopexia / Mamoplastia",250,3510],
-      ["META ADS IG","120241810116240034","Rinoplastia",250,3790],
-      ["META ADS FB","120243034643550034","Ritidoplastia / Facelift",500,7990],
-      ["META ADS FB","120243041908690034","Rinoplastia",250,3490],
-      ["META ADS FB","120241418111840034","Ritidoplastia / Facelift",300,14050],
-      ["META ADS","120243041908690034","Rinoplastia",250,3790],
-      ["META ADS IG","120243583614920034","Rinoplastia",250,5090],
-      ["META ORG WA","","Mastopexia / Mamoplastia",1000,3760],
-      ["META ADS IG","","Rinoplastia",250,6430],
-      ["WEBSITE","","Ritidoplastia / Facelift",250,9000],
-      ["META ORG WA","","Mastopexia / Mamoplastia",250,3290],
-      ["Meta Ads","120243041908690034","Blefaroplastia",250,3190],
-      ["META IG ORG","","Rinoplastia",250,3830],
-      ["Meta Ads","120243041908690034","Rinoplastia",250,3490],
-      ["META ORG WA","","Rinoplastia",250,3950],
-      ["DR HERMES","","Otros",1105,0],
-      ["META ADS FB","120242286998210034","Mastopexia / Mamoplastia",250,12200],
-      ["Organico","","Abdominoplastia",250,6500],
-      ["META ADS IG","120242286998210034","Lipoescultura / Liposucción",250,5490],
-      ["META ADS IG","Social Media | Rinoseptoplastia","Rinoseptoplastia",250,4290],
-      ["Website","","Rinoplastia",250,3490],
-      ["META ADS IG","120243583614920034","Rinoseptoplastia",250,4510],
-      ["Recomendación","","Mastopexia / Mamoplastia",250,4590],
-      ["META ADS IG","120246597906580034","Rinoplastia",250,0],
-      ["META ADS FB","120242286998210034","Ritidoplastia / Facelift",250,7990],
-      ["META ADS FB","120243041908690034","Ritidoplastia / Facelift",250,8590],
-      ["Whatsapp Org","","Mastopexia / Mamoplastia",250,6690],
-      ["META ADS IG","120246852888710034","Rinoseptoplastia",250,4510],
-      ["META ADS IG","120243583614920034","Rinoseptoplastia",250,4290],
-      ["Whatsapp Org","","Ritidoplastia / Facelift",250,6390],
-      ["Organico","","Rinoplastia",250,3690],
-      ["META ADS IG","","Rinoplastia",250,3830],
-      ["Whatsapp Org","","Abdominoplastia",250,6290],
-      ["Whatsapp Org","","Mastopexia / Mamoplastia",250,4590],
-      ["META ADS IG","","Lipoescultura / Liposucción",250,7370],
-      ["Px Ciplastic","","Ritidoplastia / Facelift",380,6500],
-      ["META ADS FB","120241816426670034","Ritidoplastia / Facelift",250,9780],
-      ["","","Ritidoplastia / Facelift",500,9890],
-      ["","","Blefaroplastia",250,3290],
-      ["Whatsapp Org","","Rinoplastia",250,3632],
-      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,3390],
-      ["Google Adds","","Otros",250,3600],
-      ["META IG ORG","","Lipoescultura / Liposucción",250,4990],
-      ["Whatsapp Org","","Lipoescultura / Liposucción",250,4990],
-      ["META ADS IG","120243583614920034","Rinoplastia",500,3490]
+      ["META ADS FB","Campaña Easter Moment Rino","Rinoplastia",250,4590,"Misael Miranda"],
+      ["META IG ORG","","Rinoplastia",500,3790,"Misael Miranda"],
+      ["META ADS FB","120243032147940034","Ritidoplastia / Facelift",300,7190,"Misael Miranda"],
+      ["META ADS IG","120241816426650034","Lipoabdominoplastia",250,6500,"Misael Miranda"],
+      ["META ADS FB","120242286998210034","Rejuvenecimiento Facial",300,6590,"Pedro Baca"],
+      ["META ADS IG","120242286952330034","Ritidoplastia / Facelift",250,5690,"Misael Miranda"],
+      ["META ADS FB","120243037425840034","Lipoabdominoplastia",250,5600,"Alexa Escalante"],
+      ["META ADS FB","120241816426690034","Lipoabdominoplastia",250,6500,"Alexa Escalante"],
+      ["META ADS IG","120243036245730034","Mastopexia / Mamoplastia",250,6690,"Misael Miranda"],
+      ["META ADS IG","120241418111840034","Ritidoplastia / Facelift",250,10000,"Alexa Escalante"],
+      ["Px CIPLASTIC","","Lipoescultura / Liposucción",250,6200,"Equipo"],
+      ["META ORG WA","","Lipoescultura / Liposucción",250,7990,"Pedro Baca"],
+      ["META ADS IG","120243583614920034","Rinoplastia",250,3790,"Alexa Escalante"],
+      ["META ADS IG","","Lipoabdominoplastia",250,7500,"Misael Miranda"],
+      ["META ORG WA","","Transplante Capilar",250,5500,"Alexa Escalante"],
+      ["META ORG WA","","Lipoescultura / Liposucción",250,2390,"Misael Miranda"],
+      ["META ORG WA","","Mastopexia / Mamoplastia",250,5290,"Alexa Escalante"],
+      ["META ORG WA","","Rinoplastia",250,3790,"Alexa Escalante"],
+      ["Website","","Rinoplastia",300,3790,"Misael Miranda"],
+      ["META ORG WA","","Rinoplastia",250,3790,"Alexa Escalante"],
+      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,3600,"Equipo"],
+      ["META ADS FB","","Lipoescultura / Liposucción",250,4600,"Alexa Escalante"],
+      ["META ORG WA","FB Ads | Rinoseptoplastia","Rinoseptoplastia",250,4160,"Alexa Escalante"],
+      ["META ORG WA","","Rinoplastia",250,4440,"Karina Sifuentes"],
+      ["META ORG WA","","Endolift",500,3490,"Pedro Baca"],
+      ["META ORG WA","Instagram Ads-Rinoplastia","Rinoplastia",250,3490,"Alexa Escalante"],
+      ["META ADS IG","","Lipoabdominoplastia",500,13000,"Alexa Escalante"],
+      ["META ORG WA","","Rinoplastia",250,3500,"Pedro Baca"],
+      ["META ADS IG","120243041908690034","Rinoplastia",250,4490,"Pedro Baca"],
+      ["META ORG WA","","Lipoescultura / Liposucción",250,10000,"Misael Miranda"],
+      ["Px Ciplastic","","Lipoabdominoplastia",300,14830,"Pedro Baca"],
+      ["META ADS IG","","Lipoabdominoplastia",250,10990,"Misael Miranda"],
+      ["META ADS IG","120245948781620034","Rinoplastia",250,3790,"Alexa Escalante"],
+      ["META ADS FB","","Mastopexia / Mamoplastia",250,7200,"Pedro Baca"],
+      ["Px. CIPLASTIC","","Mastopexia / Mamoplastia",250,11580,"Equipo"],
+      ["META ORG WA","","Lipoabdominoplastia",250,6690,"Equipo"],
+      ["META ADS IG","","Rinoplastia",250,4290,"Misael Miranda"],
+      ["Google Ads","","Lipoabdominoplastia",250,7280,"Pedro Baca"],
+      ["META ORG WA","","Mastopexia / Mamoplastia",300,7090,"Pedro Baca"],
+      ["META IG ORG","","Mastopexia / Mamoplastia",250,4590,"Alexa Escalante"],
+      ["META ORG WA","","Rinoplastia",250,3790,"Alexa Escalante"],
+      ["META ADS IG","120243583614920034","Rinoplastia",250,4190,"Alexa Escalante"],
+      ["META ADS FB","120242287911820034","Lipoescultura / Liposucción",250,6400,"Misael Miranda"],
+      ["Ref. Dr Hermes","","Mastopexia / Mamoplastia",5590,5590,"Equipo"],
+      ["META ORG WA","","Mastopexia / Mamoplastia",500,4590,"Misael Miranda"],
+      ["META ORG WA","","Ritidoplastia / Facelift",250,10980,"Misael Miranda"],
+      ["META ADS IG","120243583614920034","Rinoplastia",250,4790,"Misael Miranda"],
+      ["META ADS FB","120241418111840034","Lipoescultura / Liposucción",5020,7600,"Alexa Escalante"],
+      ["Ref. Dr Hermes","","Lipoabdominoplastia",270,0,"Equipo"],
+      ["WEBSITE","","Lipoabdominoplastia",250,4590,"Alexa Escalante"],
+      ["META IG ORG","","Lipoabdominoplastia",250,6990,"Alexa Escalante"],
+      ["Espectacular","","Ritidoplastia / Facelift",250,13770,"Pedro Baca"],
+      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,4590,"Equipo"],
+      ["META IG ORG","","Mastopexia / Mamoplastia",250,4590,"Misael Miranda"],
+      ["META IG ORG","","Lipoescultura / Liposucción",500,4600,"Alexa Escalante"],
+      ["META ORG WA","","Rinoseptoplastia",250,4190,"Alexa Escalante"],
+      ["META ORG WA","","Rinoseptoplastia",250,4190,"Alexa Escalante"],
+      ["META ORG WA","","Rinoplastia",250,3790,"Alexa Escalante"],
+      ["META ORG WA","META ADS FB | Glow Forward","Rinoplastia",250,4490,"Misael Miranda"],
+      ["META ADS IG","120242286998210034","Rinoplastia",250,3390,"Alexa Escalante"],
+      ["META ADS FB","122198754788388150","Rinoplastia",500,7570,"Pedro Baca"],
+      ["META ADS FB","122199310430388150","Rinoseptoplastia",250,3830,"Pedro Baca"],
+      ["META ADS IG","120243041908690034","Rinoseptoplastia",250,4290,"Alexa Escalante"],
+      ["META IG ORG","","Mastopexia / Mamoplastia",250,4590,"Pedro Baca"],
+      ["META ORG WA","","Rinoplastia",500,3830,"Misael Miranda"],
+      ["WEBSITE","","Lipoescultura / Liposucción",250,5500,"Pedro Baca"],
+      ["META ADS FB","120242286952330034","Rinoplastia",250,6090,"Alexa Escalante"],
+      ["TikTok","","Ritidoplastia / Facelift",250,7590,"Misael Miranda"],
+      ["META ORG WA","","Mastopexia / Mamoplastia",250,4661,"Alexa Escalante"],
+      ["META ADS IG","120243041908690034","Rinoseptoplastia",250,4190,"Pedro Baca"],
+      ["META ADS IG","120246597906580034","Rinoplastia",250,3760,"Alexa Escalante"],
+      ["META ADS FB","120241816426610034","Ritidoplastia / Facelift",250,9000,"Misael Miranda"],
+      ["META IG ORG","","Mastopexia / Mamoplastia",250,3510,"Alexa Escalante"],
+      ["META ADS IG","120241810116240034","Rinoplastia",250,3790,"Misael Miranda"],
+      ["META ADS FB","120243034643550034","Ritidoplastia / Facelift",500,7990,"Misael Miranda"],
+      ["META ADS FB","120243041908690034","Rinoplastia",250,3490,"Alexa Escalante"],
+      ["META ADS FB","120241418111840034","Ritidoplastia / Facelift",300,14050,"Misael Miranda"],
+      ["META ADS","120243041908690034","Rinoplastia",250,3790,"Pedro Baca"],
+      ["META ADS IG","120243583614920034","Rinoplastia",250,5090,"Alexa Escalante"],
+      ["META ORG WA","","Mastopexia / Mamoplastia",1000,3760,"Alexa Escalante"],
+      ["META ADS IG","","Rinoplastia",250,6430,"Alexa Escalante"],
+      ["WEBSITE","","Ritidoplastia / Facelift",250,9000,"Pedro Baca"],
+      ["META ORG WA","","Mastopexia / Mamoplastia",250,3290,"Alexa Escalante"],
+      ["Meta Ads","120243041908690034","Blefaroplastia",250,3190,"Misael Miranda"],
+      ["META IG ORG","","Rinoplastia",250,3830,"Pedro Baca"],
+      ["Meta Ads","120243041908690034","Rinoplastia",250,3490,"Pedro Baca"],
+      ["META ORG WA","","Rinoplastia",250,3950,"Pedro Baca"],
+      ["DR HERMES","","Otros",1105,0,"Equipo"],
+      ["META ADS FB","120242286998210034","Mastopexia / Mamoplastia",250,12200,"Alexa Escalante"],
+      ["Organico","","Abdominoplastia",250,6500,"Alexa Escalante"],
+      ["META ADS IG","120242286998210034","Lipoescultura / Liposucción",250,5490,"Pedro Baca"],
+      ["META ADS IG","Social Media | Rinoseptoplastia","Rinoseptoplastia",250,4290,"Pedro Baca"],
+      ["Website","","Rinoplastia",250,3490,"Pedro Baca"],
+      ["META ADS IG","120243583614920034","Rinoseptoplastia",250,4510,"Alexa Escalante"],
+      ["Recomendación","","Mastopexia / Mamoplastia",250,4590,"Alexa Escalante"],
+      ["META ADS IG","120246597906580034","Rinoplastia",250,0,"Pedro Baca"],
+      ["META ADS FB","120242286998210034","Ritidoplastia / Facelift",250,7990,"Pedro Baca"],
+      ["META ADS FB","120243041908690034","Ritidoplastia / Facelift",250,8590,"Alexa Escalante"],
+      ["Whatsapp Org","","Mastopexia / Mamoplastia",250,6690,"Misael Miranda"],
+      ["META ADS IG","120246852888710034","Rinoseptoplastia",250,4510,"Alexa Escalante"],
+      ["META ADS IG","120243583614920034","Rinoseptoplastia",250,4290,"Misael Miranda"],
+      ["Whatsapp Org","","Ritidoplastia / Facelift",250,6390,"Pedro Baca"],
+      ["Organico","","Rinoplastia",250,3690,"Pedro Baca"],
+      ["META ADS IG","","Rinoplastia",250,3830,"Misael Miranda"],
+      ["Whatsapp Org","","Abdominoplastia",250,6290,"Misael Miranda"],
+      ["Whatsapp Org","","Mastopexia / Mamoplastia",250,4590,"Misael Miranda"],
+      ["META ADS IG","","Lipoescultura / Liposucción",250,7370,"Misael Miranda"],
+      ["Px Ciplastic","","Ritidoplastia / Facelift",380,6500,"Misael Miranda"],
+      ["META ADS FB","120241816426670034","Ritidoplastia / Facelift",250,9780,"Misael Miranda"],
+      ["","","Ritidoplastia / Facelift",500,9890,"Pedro Baca"],
+      ["","","Blefaroplastia",250,3290,"Pedro Baca"],
+      ["Whatsapp Org","","Rinoplastia",250,3632,"Alexa Escalante"],
+      ["Px Ciplastic","","Mastopexia / Mamoplastia",250,3390,"Equipo"],
+      ["Google Adds","","Otros",250,3600,"Pedro Baca"],
+      ["META IG ORG","","Lipoescultura / Liposucción",250,4990,"Alexa Escalante"],
+      ["Whatsapp Org","","Lipoescultura / Liposucción",250,4990,"Misael Miranda"],
+      ["META ADS IG","120243583614920034","Rinoplastia",500,3490,"Alexa Escalante"]
     ]
   }
   // Agrega junio aquí: junio:{label:'Junio 2026',period:'...',rows:[...]}
@@ -253,7 +270,7 @@ var MONTHS = {
 // ── CHARTS ──────────────────────────────────────────
 var charts = {};
 function destroyCharts() {
-  Object.values(charts).forEach(function(c){ try{c.destroy()}catch(e){} });
+  Object.values(charts).forEach(function(c){ try{c.destroy();}catch(e){} });
   charts = {};
 }
 
@@ -262,7 +279,7 @@ function render(monthKey) {
   destroyCharts();
   var m = MONTHS[monthKey];
   var d = process(m.rows);
-  var chKeys = Object.keys(d.channels).sort(function(a,b){ return d.channels[b].deposits - d.channels[a].deposits; });
+  var chKeys = Object.keys(d.channels).sort(function(a,b){ return d.channels[b].deposits-d.channels[a].deposits; });
   var cxSorted = Object.entries(d.cxMap).sort(function(a,b){ return b[1]-a[1]; }).slice(0,10);
   var cxTotal = Object.values(d.cxMap).reduce(function(a,b){ return a+b; },0);
   var metaDep = (d.channels['Meta Ads Pagado']||{deposits:0}).deposits;
@@ -273,50 +290,131 @@ function render(monthKey) {
   // Semanas por índice de fila
   var wkDep=[0,0,0,0,0];
   m.rows.forEach(function(r,i){
-    var w = i<23?0 : i<46?1 : i<69?2 : i<92?3 : 4;
-    wkDep[w] += r[3];
+    var w=i<23?0:i<46?1:i<69?2:i<92?3:4;
+    wkDep[w]+=r[3];
   });
 
-  // Build HTML
+  // ── Métricas ──
   var metricsHTML =
-    mc('c1','Total Depósitos','$'+d.dep.toLocaleString('en-US'),d.count+' pacientes') +
-    mc('c2','Venta Cirugías','$'+d.surg.toLocaleString('en-US'),'USD estimado') +
-    mc('c3','Meta Ads Pagado','$'+metaDep.toLocaleString('en-US'),Math.round(metaPx/d.count*100)+'% del total px') +
-    mc('c4','Ticket Promedio','$'+ticket.toLocaleString('en-US'),'por cirugía') +
+    mc('c1','Total Depósitos','$'+d.dep.toLocaleString('en-US'),d.count+' pacientes')+
+    mc('c2','Venta Cirugías','$'+d.surg.toLocaleString('en-US'),'USD estimado')+
+    mc('c3','Meta Ads Pagado','$'+metaDep.toLocaleString('en-US'),Math.round(metaPx/d.count*100)+'% del total px')+
+    mc('c4','Ticket Promedio','$'+ticket.toLocaleString('en-US'),'por cirugía')+
     mc('c5','Orgánico Meta/WA',orgPx+' px',Math.round(orgPx/d.count*100)+'% del período');
 
-  var legendBar = chKeys.map(function(k){ return '<div class="li"><span class="ld" style="background:'+( CH_COLORS[k]||'#888')+'"></span>'+k+'</div>'; }).join('');
-  var legendPie = chKeys.map(function(k){ return '<div class="li"><span class="ld" style="background:'+(CH_COLORS[k]||'#888')+'"></span>'+k+' <strong style="color:var(--text)">'+d.channels[k].count+'</strong> ('+Math.round(d.channels[k].count/d.count*100)+'%)</div>'; }).join('');
+  // ── Leyenda barra ──
+  var legendBar = chKeys.map(function(k){
+    return '<div class="li"><span class="ld" style="background:'+(CH_COLORS[k]||'#888')+'"></span>'+k+'</div>';
+  }).join('');
+
+  // ── Leyenda pie ──
+  var legendPie = chKeys.map(function(k){
+    return '<div class="li"><span class="ld" style="background:'+(CH_COLORS[k]||'#888')+'"></span>'+k+' <strong style="color:var(--text)">'+d.channels[k].count+'</strong> ('+Math.round(d.channels[k].count/d.count*100)+'%)</div>';
+  }).join('');
+
+  // ── Tabla canales — nota "Otros" ──
+  var otrosNote = '<div class="otros-note">'+
+    '<strong>Otros</strong> incluye: Website/Tráfico directo, TikTok, Google Ads, Espectacular (OOH), Recomendaciones externas y fuentes sin clasificar.'+
+    '</div>';
 
   var tableRows = chKeys.map(function(k){
     var c=d.channels[k], pct=Math.round(c.count/d.count*100), cls=pct>=40?'h':pct>=15?'m':'l';
     return '<tr><td><span class="cdot" style="background:'+(CH_COLORS[k]||'#888')+'"></span>'+k+'</td><td>'+c.count+'</td><td><span class="pill '+cls+'">'+pct+'%</span></td><td>$'+c.deposits.toLocaleString('en-US')+'</td><td>$'+c.surgery.toLocaleString('en-US')+'</td></tr>';
   }).join('');
 
+  // ── Ranking procedimientos ──
   var rankHTML = cxSorted.map(function(entry,i){
     var name=entry[0], count=entry[1];
     var pct=Math.round(count/cxTotal*100), bw=Math.round(count/cxSorted[0][1]*100);
-    return '<div class="rrow"><span class="rn">#'+(i+1)+'</span><div class="rinfo"><span style="font-size:13px;font-weight:500;color:var(--text)">'+name+'</span><div class="rbwrap"><div class="rb" style="width:'+bw+'%;background:'+(PROC_COLORS[i]||'#888')+'"></div></div><span class="rcnt">'+count+' pacientes</span></div><span class="rpct" style="color:'+(PROC_COLORS[i]||'#888')+'">'+pct+'%</span></div>';
+    return '<div class="rrow">'+
+      '<span class="rn">#'+(i+1)+'</span>'+
+      '<div class="rinfo">'+
+        '<span style="font-size:13px;font-weight:500;color:var(--text)">'+name+'</span>'+
+        '<div class="rbwrap"><div class="rb" style="width:'+bw+'%;background:'+(PROC_COLORS[i]||'#888')+'"></div></div>'+
+        '<span class="rcnt">'+count+' pacientes</span>'+
+      '</div>'+
+      '<span class="rpct" style="color:'+(PROC_COLORS[i]||'#888')+'">'+pct+'%</span>'+
+    '</div>';
   }).join('');
 
+  // ── Tabla agentes por procedimiento ──
+  // Collect all agents present
+  var agentSet = {};
+  cxSorted.forEach(function(entry){
+    var ag = d.cxByAgent[entry[0]]||{};
+    Object.keys(ag).forEach(function(a){ agentSet[a]=1; });
+  });
+  var agents = Object.keys(agentSet).sort();
+  var agColors = ['#3266ad','#1D9E75','#D85A30','#7F77DD','#B4B2A9'];
+
+  var agTableHead = '<tr><th>Procedimiento</th><th>Total</th>'+
+    agents.map(function(a,i){ return '<th style="color:'+(agColors[i]||'#888')+'">'+a+'</th>'; }).join('')+
+  '</tr>';
+
+  var agTableRows = cxSorted.map(function(entry,i){
+    var name=entry[0], total=entry[1];
+    var ag=d.cxByAgent[name]||{};
+    var cells = agents.map(function(a,ai){
+      var n=ag[a]||0;
+      var pct=total>0?Math.round(n/total*100):0;
+      var bar = n>0 ? '<span class="ag-bar" style="width:'+(pct*0.8)+'px;background:'+(agColors[ai]||'#888')+'"></span>' : '';
+      return '<td>'+(n>0?bar+pct+'%':'—')+'</td>';
+    }).join('');
+    return '<tr><td><span class="cdot" style="background:'+(PROC_COLORS[i]||'#888')+'"></span>'+name+'</td><td><strong>'+total+'</strong></td>'+cells+'</tr>';
+  }).join('');
+
+  var agTableFoot = '<tr class="tr"><td>Total</td><td>'+cxSorted.reduce(function(a,e){return a+e[1];},0)+'</td>'+
+    agents.map(function(a){
+      var t=cxSorted.reduce(function(acc,entry){return acc+(d.cxByAgent[entry[0]]||{})[a]||0;},0);
+      return '<td><strong>'+t+'</strong></td>';
+    }).join('')+'</tr>';
+
+  // ── Desglose canal por procedimiento ──
   var desgHTML = cxSorted.map(function(entry,i){
     var name=entry[0], count=entry[1];
     var pct=Math.round(count/cxTotal*100), bw=Math.round(count/cxSorted[0][1]*100);
     var cb=d.cxByCh[name]||{meta:0,organico:0,ciplastic:0,otros:0};
     var tot=cb.meta+cb.organico+cb.ciplastic+cb.otros||1;
-    var segs=CH_BREAKDOWN.map(function(x){ var w=Math.round(cb[x.k]/tot*100); return w>0?'<div class="chseg" style="flex:'+w+';background:'+x.c+'" title="'+x.l+': '+cb[x.k]+'"></div>':''; }).join('');
-    var lbls=CH_BREAKDOWN.filter(function(x){ return cb[x.k]>0; }).map(function(x){ return '<span class="chll"><span class="chld" style="background:'+x.c+'"></span>'+x.l+' '+cb[x.k]+'</span>'; }).join('');
-    return '<div class="rrow"><span class="rn">#'+(i+1)+'</span><div class="rinfo" style="flex:1"><span style="font-size:13px;font-weight:500;color:var(--text)">'+name+'</span><div class="rbwrap"><div class="rb" style="width:'+bw+'%;background:'+(PROC_COLORS[i]||'#888')+'"></div></div><div class="chbr">'+segs+'</div><div class="chlbls">'+lbls+'</div></div><div style="text-align:right;min-width:55px"><div class="rpct" style="color:'+(PROC_COLORS[i]||'#888')+'">'+pct+'%</div><div class="rcnt">'+count+' px</div></div></div>';
+    var segs=CH_BREAKDOWN.map(function(x){
+      var w=Math.round(cb[x.k]/tot*100);
+      return w>0?'<div class="chseg" style="flex:'+w+';background:'+x.c+'" title="'+x.l+': '+cb[x.k]+'"></div>':'';
+    }).join('');
+    var lbls=CH_BREAKDOWN.filter(function(x){return cb[x.k]>0;}).map(function(x){
+      return '<span class="chll"><span class="chld" style="background:'+x.c+'"></span>'+x.l+' '+cb[x.k]+'</span>';
+    }).join('');
+    return '<div class="rrow">'+
+      '<span class="rn">#'+(i+1)+'</span>'+
+      '<div class="rinfo" style="flex:1">'+
+        '<span style="font-size:13px;font-weight:500;color:var(--text)">'+name+'</span>'+
+        '<div class="rbwrap"><div class="rb" style="width:'+bw+'%;background:'+(PROC_COLORS[i]||'#888')+'"></div></div>'+
+        '<div class="chbr">'+segs+'</div>'+
+        '<div class="chlbls">'+lbls+'</div>'+
+      '</div>'+
+      '<div style="text-align:right;min-width:55px">'+
+        '<div class="rpct" style="color:'+(PROC_COLORS[i]||'#888')+'">'+pct+'%</div>'+
+        '<div class="rcnt">'+count+' px</div>'+
+      '</div>'+
+    '</div>';
   }).join('');
 
+  var desgOtrosNote = '<div class="otros-note">'+
+    '<strong>Otros (canal)</strong> incluye: Website, TikTok, Google Ads, Espectacular (OOH), Recomendaciones externas y fuentes sin clasificar en Meta.'+
+    '</div>';
+
+  // ── Armar HTML ──
   document.getElementById('dash').innerHTML =
     '<div class="slabel">resumen del período · '+m.period+'</div>'+
     '<div class="mgrid">'+metricsHTML+'</div>'+
 
     '<div class="slabel">canales de adquisición</div>'+
     '<div class="row2" style="margin-bottom:16px">'+
-      '<div class="card"><div class="ct">depósitos captados</div><div class="cs">Total USD por canal</div><div class="legend">'+legendBar+'</div><div style="position:relative;height:220px"><canvas id="cBar"></canvas></div></div>'+
-      '<div class="card"><div class="ct">depósitos semanales</div><div class="cs">Volumen por semana del mes</div><div style="position:relative;height:220px"><canvas id="cWeek"></canvas></div></div>'+
+      '<div class="card"><div class="ct">depósitos captados</div><div class="cs">Total USD por canal</div>'+
+        '<div class="legend">'+legendBar+'</div>'+
+        '<div style="position:relative;height:220px"><canvas id="cBar"></canvas></div>'+
+      '</div>'+
+      '<div class="card"><div class="ct">depósitos semanales</div><div class="cs">Volumen por semana del mes</div>'+
+        '<div style="position:relative;height:220px"><canvas id="cWeek"></canvas></div>'+
+      '</div>'+
     '</div>'+
     '<div class="card" style="margin-bottom:16px">'+
       '<div class="ct">distribución de pacientes</div><div class="cs">% por canal de adquisición</div>'+
@@ -330,40 +428,51 @@ function render(monthKey) {
       '<table class="cht"><thead><tr><th>Canal</th><th>Px</th><th>%</th><th>Depósitos</th><th>Venta</th></tr></thead>'+
       '<tbody>'+tableRows+'</tbody>'+
       '<tfoot><tr class="tr"><td>Total</td><td>'+d.count+'</td><td>100%</td><td>$'+d.dep.toLocaleString('en-US')+'</td><td>$'+d.surg.toLocaleString('en-US')+'</td></tr></tfoot></table>'+
+      otrosNote+
     '</div>'+
 
     '<div class="slabel">procedimientos más vendidos</div>'+
-    '<div class="card" style="margin-bottom:16px"><div class="ct">ranking</div><div class="cs">Por volumen de pacientes</div><div class="ranklist">'+rankHTML+'</div></div>'+
+    '<div class="card" style="margin-bottom:16px">'+
+      '<div class="ct">ranking top 10</div><div class="cs">Por volumen de pacientes</div>'+
+      '<div class="ranklist">'+rankHTML+'</div>'+
+    '</div>'+
+
+    '<div class="card" style="margin-bottom:16px">'+
+      '<div class="ct">ventas por agente</div>'+
+      '<div class="cs">% de cada agente sobre el total de ese procedimiento</div>'+
+      '<table class="cht"><thead>'+agTableHead+'</thead><tbody>'+agTableRows+'</tbody><tfoot>'+agTableFoot+'</tfoot></table>'+
+    '</div>'+
 
     '<div class="slabel">procedimientos por canal de adquisición</div>'+
     '<div class="card" style="margin-bottom:24px">'+
       '<div class="ct">desglose por procedimiento</div>'+
-      '<div class="cs">Barra azul = total pacientes &nbsp;|&nbsp; '+
-      CH_BREAKDOWN.map(function(x){ return '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'+x.c+'"></span>'+x.l+'</span>'; }).join('')+
+      '<div class="cs">Barra superior = total pacientes &nbsp;|&nbsp;'+
+        CH_BREAKDOWN.map(function(x){ return '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'+x.c+'"></span>'+x.l+'</span>'; }).join('')+
       '</div>'+
       '<div class="ranklist">'+desgHTML+'</div>'+
+      desgOtrosNote+
     '</div>';
 
-  // ── CHARTS ──────────────────────────────────────
+  // ── Init Charts ──────────────────────────────────
   setTimeout(function(){
     var elBar=document.getElementById('cBar');
     var elWeek=document.getElementById('cWeek');
     var elPie=document.getElementById('cPie');
     if(!elBar||!elWeek||!elPie) return;
 
-    charts.bar = new Chart(elBar, {
+    charts.bar = new Chart(elBar,{
       type:'bar',
       data:{labels:chKeys,datasets:[{data:chKeys.map(function(k){return d.channels[k].deposits;}),backgroundColor:chKeys.map(function(k){return CH_COLORS[k]||'#888';}),borderRadius:4,borderSkipped:false}]},
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' $'+c.raw.toLocaleString('en-US');}}}},scales:{x:{ticks:{font:{size:10},maxRotation:35,autoSkip:false},grid:{display:false}},y:{ticks:{callback:function(v){return '$'+(v>=1000?Math.round(v/1000)+'k':v);},font:{size:10}},grid:{color:'#e8eef7'}}}}
     });
 
-    charts.week = new Chart(elWeek, {
+    charts.week = new Chart(elWeek,{
       type:'line',
       data:{labels:['Sem 1 (1-7)','Sem 2 (8-14)','Sem 3 (15-21)','Sem 4 (22-28)','Sem 5 (29+)'],datasets:[{data:wkDep,borderColor:'#3266ad',backgroundColor:'rgba(50,102,173,.08)',tension:.35,fill:true,pointRadius:5,pointBackgroundColor:'#3266ad',pointBorderColor:'#fff',pointBorderWidth:2}]},
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' $'+c.raw.toLocaleString('en-US');}}}},scales:{x:{ticks:{font:{size:10}},grid:{display:false}},y:{ticks:{callback:function(v){return '$'+(v>=1000?Math.round(v/1000)+'k':v);},font:{size:10}},grid:{color:'#e8eef7'}}}}
     });
 
-    charts.pie = new Chart(elPie, {
+    charts.pie = new Chart(elPie,{
       type:'doughnut',
       data:{labels:chKeys,datasets:[{data:chKeys.map(function(k){return d.channels[k].count;}),backgroundColor:chKeys.map(function(k){return CH_COLORS[k]||'#888';}),borderWidth:2,borderColor:'#fff'}]},
       options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+c.label+': '+c.raw+' px ('+Math.round(c.raw/d.count*100)+'%)';}}}}}
@@ -373,7 +482,9 @@ function render(monthKey) {
   document.getElementById('lupd').textContent = m.label+' · '+new Date().toLocaleTimeString('es-MX');
 }
 
-function mc(cls,label,val,sub){ return '<div class="mc '+cls+'"><div class="ml">'+label+'</div><div class="mv">'+val+'</div><div class="ms">'+sub+'</div></div>'; }
+function mc(cls,label,val,sub){
+  return '<div class="mc '+cls+'"><div class="ml">'+label+'</div><div class="mv">'+val+'</div><div class="ms">'+sub+'</div></div>';
+}
 
 function switchMonth(key,btn) {
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
