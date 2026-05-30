@@ -841,29 +841,31 @@
   //  CARGA PRINCIPAL
   // ════════════════════════════════════════════════════════════
   async function loadData() {
-    document.getElementById('loading-state').style.display = 'flex';
-    document.getElementById('dashboard-content').style.display = 'none';
     document.getElementById('error-state').style.display = 'none';
 
-    // Si no hay URL configurada, usa datos de demostración
-    if (!SHEET_CSV_URL || SHEET_CSV_URL === 'TU_URL_CSV_AQUI') {
-      loadDemoData();
-      return;
-    }
+    // Mostrar datos demo de inmediato — sin spinner, sin espera
+    loadDemoData();
+
+    // Luego intentar actualizar con datos en vivo en segundo plano
+    if (!SHEET_CSV_URL || SHEET_CSV_URL === 'TU_URL_CSV_AQUI') return;
 
     try {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), 6000); // máximo 6 segundos
       const url = SHEET_CSV_URL + '&t=' + Date.now();
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: controller.signal });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const text = await res.text();
-      if (!text || text.length < 50) throw new Error('Respuesta vacía');
+      if (!text || text.length < 50) throw new Error('Vacío');
       const rows = parseCSV(text);
       if (rows.length < 2) throw new Error('Sin datos');
+      // Datos en vivo disponibles — actualizar el dashboard silenciosamente
       renderDashboard(rows);
+      document.getElementById('last-update').textContent = '🟢 En vivo · ' + new Date().toLocaleTimeString('es-MX');
     } catch (err) {
-      console.error('Error:', err.message);
-      showError('No se pudieron cargar los datos en vivo. Mostrando datos demo.');
-      loadDemoData();
+      // No hacer nada — el demo ya está visible, solo loguear
+      console.warn('Sheet no disponible, usando datos demo:', err.message);
+      document.getElementById('last-update').textContent = '⚠️ Datos demo · ' + new Date().toLocaleTimeString('es-MX');
     }
   }
 
@@ -872,7 +874,6 @@
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('dashboard-content').style.display = 'block';
     document.getElementById('period-label').textContent = PERIOD_LABEL;
-    document.getElementById('last-update').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-MX');
     renderMetrics(d);
     renderCharts(d);
   }
