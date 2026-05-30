@@ -246,6 +246,13 @@
     .rank-pct { font-size: 13px; font-weight: 600; color: var(--text); min-width: 38px; text-align: right; font-family: 'DM Mono', monospace; }
     .rank-count { font-size: 11px; color: var(--muted); }
 
+    /* Channel breakdown bars */
+    .ch-bar-row { display: flex; align-items: center; gap: 6px; margin-top: 5px; }
+    .ch-bar-seg { height: 6px; border-radius: 3px; transition: width 0.6s ease; }
+    .ch-bar-labels { display: flex; gap: 10px; margin-top: 4px; flex-wrap: wrap; }
+    .ch-bar-label { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .ch-bar-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+
     /* CHANNEL TABLE */
     .channel-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .channel-table th {
@@ -309,7 +316,7 @@
 <header>
   <div class="header-left">
     <img class="logo-img"
-      src="https://ciplastic.com/wp-content/uploads/2025/04/cropped-Logo_Footer-1.png-1.webp"
+      src="https://ciplastic.com/wp-content/uploads/2025/04/cropped-Logo_Footer-1.png-1.webp" style="filter:brightness(0) invert(1)"
       alt="CIPlastic"
       onerror="this.outerHTML='<span class=\'logo-fallback\'>CIPLASTIC</span>'">
     <span class="header-title">Dashboard de Adquisición — Reporte de Comisiones</span>
@@ -400,6 +407,13 @@
           <canvas id="chartProcs" role="img" aria-label="Top procedimientos por volumen"></canvas>
         </div>
       </div>
+    </div>
+
+    <div class="section-label">procedimientos por canal de adquisición</div>
+    <div class="chart-card" style="margin-bottom:20px">
+      <div class="chart-card-title">desglose por procedimiento</div>
+      <div class="chart-card-subtitle">Cantidad de pacientes y origen del canal por procedimiento</div>
+      <div class="rank-list" id="rank-list-ch"></div>
     </div>
 
   </div>
@@ -535,6 +549,8 @@
       return /^\d+$/.test(first) && parseInt(first) >= 1;
     });
 
+    const cxByChannel = {}; // { cxName: { meta:0, organico:0, ciplastic:0, otros:0 } }
+
     dataRows.forEach(r => {
       const dep = parseMoney(r[COL.deposito]);
       const surgery = parseMoney(r[COL.montoCirugia]);
@@ -554,6 +570,13 @@
 
       cxMap[cx] = (cxMap[cx] || 0) + 1;
 
+      // Track channel per procedure
+      if (!cxByChannel[cx]) cxByChannel[cx] = { meta: 0, organico: 0, ciplastic: 0, otros: 0 };
+      if (ch === 'Meta Ads Pagado') cxByChannel[cx].meta++;
+      else if (ch === 'Orgánico Meta/WA') cxByChannel[cx].organico++;
+      else if (ch === 'Referido/Px Ciplastic') cxByChannel[cx].ciplastic++;
+      else cxByChannel[cx].otros++;
+
       const wk = getWeekNum(fecha);
       weekDep[wk] = (weekDep[wk] || 0) + dep;
 
@@ -563,7 +586,7 @@
       if (isComisionable) comisionables++;
     });
 
-    return { channels, cxMap, weekDep, totalDep, totalSurgery, totalPatients, comisionables };
+    return { channels, cxMap, cxByChannel, weekDep, totalDep, totalSurgery, totalPatients, comisionables };
   }
 
   function normalizeCx(raw) {
@@ -572,12 +595,10 @@
     if (r.includes('rinoseptoplastia') || r.includes('septoplastia')) return 'Rinoseptoplastia';
     if (r.includes('ritidoplastia') || r.includes('facelift') || r.includes('ritidectomia')) return 'Ritidoplastia / Facelift';
     if (r.includes('lipoabdominoplastia')) return 'Lipoabdominoplastia';
-    if (r.includes('lipoescultura') || r.includes('liposcultura')) return 'Lipoescultura';
-    if (r.includes('mastopexia')) return 'Mastopexia';
-    if (r.includes('mamoplastia') || r.includes('mamoplasia')) return 'Mamoplastia / Aumento';
+    if (r.includes('lipoescultura') || r.includes('liposcultura') || r.includes('liposucción') || r.includes('liposuccion')) return 'Lipoescultura / Liposucción';
+    if (r.includes('mastopexia') || r.includes('mamoplastia') || r.includes('mamoplasia')) return 'Mastopexia / Mamoplastia';
     if (r.includes('abdominoplastia')) return 'Abdominoplastia';
     if (r.includes('blefaroplastia')) return 'Blefaroplastia';
-    if (r.includes('liposucción') || r.includes('liposuccion')) return 'Liposucción';
     if (r.includes('rejuvenecimiento')) return 'Rejuvenecimiento Facial';
     if (r.includes('endolift')) return 'Endolift';
     if (r.includes('transplante capilar') || r.includes('tansplante')) return 'Transplante Capilar';
@@ -614,7 +635,7 @@
   }
 
   function renderCharts(d) {
-    const { channels, cxMap, weekDep, totalPatients } = d;
+    const { channels, cxMap, cxByChannel, weekDep, totalPatients } = d;
     const chKeys = Object.keys(channels).sort((a, b) => channels[b].deposits - channels[a].deposits);
 
     // LEGEND BAR
@@ -747,6 +768,42 @@
           <span class="rank-count">${count} pacientes</span>
         </div>
         <span class="rank-pct" style="color:${PROC_COLORS[i] || '#888'}">${pct}%</span>
+      </div>`;
+    }).join('');
+
+    // PROCEDURES WITH CHANNEL BREAKDOWN
+    const { cxByChannel } = d;
+    const CH_BAR = {
+      meta:      { color: '#3266ad', label: 'Meta Ads' },
+      organico:  { color: '#1D9E75', label: 'Orgánico' },
+      ciplastic: { color: '#888780', label: 'Px Ciplastic' },
+      otros:     { color: '#B4B2A9', label: 'Otros' },
+    };
+    document.getElementById('rank-list-ch').innerHTML = cxSorted.map(([name, count], i) => {
+      const pct = Math.round(count / cxTotal * 100);
+      const barW = Math.round(count / cxSorted[0][1] * 100);
+      const chd = cxByChannel[name] || { meta:0, organico:0, ciplastic:0, otros:0 };
+      const total = chd.meta + chd.organico + chd.ciplastic + chd.otros || 1;
+      const segs = Object.entries(CH_BAR).map(([key, cfg]) => {
+        const w = Math.round(chd[key] / total * 100);
+        return w > 0 ? `<div class="ch-bar-seg" style="width:${w}%;background:${cfg.color}" title="${cfg.label}: ${chd[key]}"></div>` : '';
+      }).join('');
+      const lbls = Object.entries(CH_BAR).map(([key, cfg]) => {
+        if (!chd[key]) return '';
+        return `<span class="ch-bar-label"><span class="ch-bar-dot" style="background:${cfg.color}"></span>${cfg.label} ${chd[key]}</span>`;
+      }).filter(Boolean).join('');
+      return `<div class="rank-row">
+        <span class="rank-num">#${i+1}</span>
+        <div class="rank-info" style="flex:1">
+          <span class="rank-name">${name}</span>
+          <div class="rank-bar-wrap" style="margin:3px 0"><div class="rank-bar" style="width:${barW}%;background:${PROC_COLORS[i] || '#888'}"></div></div>
+          <div class="ch-bar-row" style="width:100%">${segs}</div>
+          <div class="ch-bar-labels">${lbls}</div>
+        </div>
+        <div style="text-align:right;min-width:60px">
+          <div class="rank-pct" style="color:${PROC_COLORS[i] || '#888'}">${pct}%</div>
+          <div class="rank-count">${count} px</div>
+        </div>
       </div>`;
     }).join('');
 
