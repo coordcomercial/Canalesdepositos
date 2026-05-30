@@ -71,11 +71,11 @@ main{padding:24px 28px;max-width:1400px;margin:0 auto}
 .rpct{font-size:13px;font-weight:600;text-align:right;padding-top:2px;font-family:'DM Mono',monospace}
 
 /* CHANNEL BARS */
-.chbr{display:flex;height:5px;border-radius:3px;overflow:hidden;margin:3px 0;gap:1px}
+.chbr{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:4px 0;gap:1px}
 .chseg{height:100%;min-width:2px}
 .chlbls{display:flex;gap:8px;flex-wrap:wrap;margin-top:3px}
 .chll{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:3px}
-.chld{width:6px;height:6px;border-radius:1px;flex-shrink:0}
+.chld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
 /* CHANNEL TABLE */
 .cht{width:100%;border-collapse:collapse;font-size:13px}
@@ -340,24 +340,11 @@ function render(monthKey) {
     </div>
 
     <div class="slabel">canales de adquisición</div>
-    <div class="row2">
-      <div class="card">
-        <div class="ct">depósitos captados</div><div class="cs">Total USD por canal</div>
-        <div class="legend" id="leg-bar">${legHTML(chKeys)}</div>
-        <div class="cwrap" style="height:240px"><canvas id="cBar"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="ct">distribución de pacientes</div><div class="cs">% por canal</div>
-        <div class="legend" id="leg-pie">${chKeys.map(k=>`<div class="li"><span class="ld" style="background:${CH_COLORS[k]||'#888'}"></span>${k} ${Math.round(channels[k].count/totalPatients*100)}%</div>`).join('')}</div>
-        <div class="cwrap" style="height:240px"><canvas id="cPie"></canvas></div>
-      </div>
-    </div>
-
-    <div class="row3">
+    <div class="row3" style="margin-bottom:16px">
       <div class="card">
         <div class="ct">tabla de canales</div><div class="cs">Pacientes, depósitos y venta por canal</div>
         <table class="cht">
-          <thead><tr><th>Canal</th><th>Px</th><th>% Px</th><th>Depósitos</th><th>Venta</th></tr></thead>
+          <thead><tr><th>Canal</th><th>Px</th><th>%</th><th>Depósitos</th><th>Venta</th></tr></thead>
           <tbody>${chKeys.map(k=>{
             const c=channels[k];const pct=Math.round(c.count/totalPatients*100);
             const cls=pct>=40?'h':pct>=15?'m':'l';
@@ -366,25 +353,33 @@ function render(monthKey) {
           <tfoot><tr class="tr"><td>Total</td><td>${totalPatients}</td><td>100%</td><td>$${totalDep.toLocaleString('en-US')}</td><td>$${totalSurgery.toLocaleString('en-US')}</td></tr></tfoot>
         </table>
       </div>
-      <div class="card">
-        <div class="ct">depósitos semanales</div><div class="cs">Volumen por semana</div>
-        <div class="cwrap" style="height:220px"><canvas id="cWeek"></canvas></div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card" style="flex:1">
+          <div class="ct">depósitos captados</div><div class="cs">Total USD por canal</div>
+          <div class="legend">${legHTML(chKeys)}</div>
+          <div class="cwrap" style="height:160px"><canvas id="cBar"></canvas></div>
+        </div>
+        <div class="card" style="flex:1">
+          <div class="ct">depósitos semanales</div><div class="cs">Volumen por semana</div>
+          <div class="cwrap" style="height:160px"><canvas id="cWeek"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="ct">distribución de pacientes</div><div class="cs">% por canal</div>
+      <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+        <div style="width:180px;height:180px;flex-shrink:0;position:relative"><canvas id="cPie"></canvas></div>
+        <div class="legend" style="flex:1;gap:10px 20px">${chKeys.map(k=>`<div class="li" style="font-size:13px"><span class="ld" style="background:${CH_COLORS[k]||'#888'};width:11px;height:11px"></span>${k} <strong style="color:var(--text)">${channels[k].count} px</strong> <span style="color:var(--muted)">(${Math.round(channels[k].count/totalPatients*100)}%)</span></div>`).join('')}</div>
       </div>
     </div>
 
     <div class="slabel">procedimientos más vendidos</div>
-    <div class="row2">
-      <div class="card">
-        <div class="ct">ranking</div><div class="cs">Por volumen de pacientes</div>
-        <div class="ranklist">${cxSorted.map(([name,count],i)=>{
-          const pct=Math.round(count/cxTotal*100);const bw=Math.round(count/cxSorted[0][1]*100);
-          return `<div class="rrow"><span class="rn">#${i+1}</span><div class="rinfo"><span class="rname">${name}</span><div class="rbwrap"><div class="rb" style="width:${bw}%;background:${PROC_COLORS[i]||'#888'}"></div></div><span class="rcnt">${count} pacientes</span></div><span class="rpct" style="color:${PROC_COLORS[i]||'#888'}">${pct}%</span></div>`;
-        }).join('')}</div>
-      </div>
-      <div class="card">
-        <div class="ct">top 10 — volumen</div><div class="cs">Participación % sobre total</div>
-        <div class="cwrap" style="height:${cxSorted.length*38+50}px"><canvas id="cProcs"></canvas></div>
-      </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="ct">ranking</div><div class="cs">Por volumen de pacientes</div>
+      <div class="ranklist">${cxSorted.map(([name,count],i)=>{
+        const pct=Math.round(count/cxTotal*100);const bw=Math.round(count/cxSorted[0][1]*100);
+        return `<div class="rrow"><span class="rn">#${i+1}</span><div class="rinfo"><span class="rname">${name}</span><div class="rbwrap"><div class="rb" style="width:${bw}%;background:${PROC_COLORS[i]||'#888'}"></div></div><span class="rcnt">${count} pacientes</span></div><span class="rpct" style="color:${PROC_COLORS[i]||'#888'}">${pct}%</span></div>`;
+      }).join('')}</div>
     </div>
 
     <div class="slabel">procedimientos por canal de adquisición</div>
@@ -394,21 +389,17 @@ function render(monthKey) {
         const pct=Math.round(count/cxTotal*100);const bw=Math.round(count/cxSorted[0][1]*100);
         const ch=cxByChannel[name]||{meta:0,organico:0,ciplastic:0,otros:0};
         const tot=ch.meta+ch.organico+ch.ciplastic+ch.otros||1;
-        const segs=[
-          {k:'meta',c:'#3266ad',l:'Meta Ads'},
-          {k:'organico',c:'#1D9E75',l:'Orgánico'},
-          {k:'ciplastic',c:'#888780',l:'Px Ciplastic'},
-          {k:'otros',c:'#B4B2A9',l:'Otros'},
-        ].map(({k,c,l})=>{
+        const chCols=[
+          {k:'meta',c:'#E8B84B',l:'Meta Ads'},
+          {k:'organico',c:'#F97B6B',l:'Orgánico'},
+          {k:'ciplastic',c:'#A78BFA',l:'Px Ciplastic'},
+          {k:'otros',c:'#94A3B8',l:'Otros'},
+        ];
+        const segs=chCols.map(({k,c,l})=>{
           const w=Math.round(ch[k]/tot*100);
           return w>0?`<div class="chseg" style="flex:${w};background:${c}" title="${l}: ${ch[k]}"></div>`:'';
         }).join('');
-        const lbls=[
-          {k:'meta',c:'#3266ad',l:'Meta'},
-          {k:'organico',c:'#1D9E75',l:'Orgánico'},
-          {k:'ciplastic',c:'#888780',l:'Px Ciplastic'},
-          {k:'otros',c:'#B4B2A9',l:'Otros'},
-        ].filter(({k})=>ch[k]>0).map(({k,c,l})=>`<span class="chll"><span class="chld" style="background:${c}"></span>${l} ${ch[k]}</span>`).join('');
+        const lbls=chCols.filter(({k})=>ch[k]>0).map(({k,c,l})=>`<span class="chll"><span class="chld" style="background:${c}"></span>${l} ${ch[k]}</span>`).join('');
         return `<div class="rrow"><span class="rn">#${i+1}</span><div class="rinfo" style="flex:1"><span class="rname">${name}</span><div class="rbwrap"><div class="rb" style="width:${bw}%;background:${PROC_COLORS[i]||'#888'}"></div></div><div class="chbr">${segs}</div><div class="chlbls">${lbls}</div></div><div style="text-align:right;min-width:55px"><div class="rpct" style="color:${PROC_COLORS[i]||'#888'}">${pct}%</div><div class="rcnt">${count} px</div></div></div>`;
       }).join('')}
     </div>
@@ -436,7 +427,7 @@ function render(monthKey) {
     charts.pie = new Chart(document.getElementById('cPie'),{
       type:'doughnut',
       data:{labels:chKeys,datasets:[{data:chKeys.map(k=>channels[k].count),backgroundColor:chKeys.map(k=>CH_COLORS[k]||'#888'),borderWidth:2,borderColor:'#fff'}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.raw+' px ('+Math.round(c.raw/totalPatients*100)+'%)'}}}}
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.raw+' px ('+Math.round(c.raw/totalPatients*100)+'%)'}}}}
     });
     // Week
     charts.week = new Chart(document.getElementById('cWeek'),{
@@ -444,12 +435,7 @@ function render(monthKey) {
       data:{labels:['Sem 1 (1–7)','Sem 2 (8–14)','Sem 3 (15–21)','Sem 4 (22–28)','Sem 5 (29+)'],datasets:[{data:wkDep,borderColor:'#3266ad',backgroundColor:'rgba(50,102,173,.07)',tension:.35,fill:true,pointRadius:5,pointBackgroundColor:'#3266ad',pointBorderColor:'#fff',pointBorderWidth:2}]},
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.raw.toLocaleString('en-US')}}},scales:{x:{ticks:{font:{size:11}},grid:{display:false}},y:{ticks:{callback:v=>'$'+(v>=1000?Math.round(v/1000)+'k':v),font:{size:11}},grid:{color:'#e8eef7'}}}}
     });
-    // Procs
-    charts.procs = new Chart(document.getElementById('cProcs'),{
-      type:'bar',
-      data:{labels:cxSorted.map(([n])=>n),datasets:[{data:cxSorted.map(([,c])=>c),backgroundColor:PROC_COLORS.slice(0,cxSorted.length),borderRadius:3,borderSkipped:false}]},
-      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' px ('+Math.round(c.raw/cxTotal*100)+'%)'}}},scales:{x:{ticks:{font:{size:11}},grid:{color:'#e8eef7'}},y:{ticks:{font:{size:11}},grid:{display:false}}}}
-    });
+
   });
 
   document.getElementById('lupd').textContent = m.label + ' · ' + new Date().toLocaleTimeString('es-MX');
